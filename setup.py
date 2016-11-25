@@ -19,9 +19,9 @@ setup(
     ],
     keywords='devops ansible inventory',
     packages=find_packages(),
-    python_requires='>=3.0',
+    python_requires='>=3.3',
     setup_requires=['setuptools_scm', 'pytest-runner'],
-    install_requires=[],
+    install_requires=['attrs'],
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

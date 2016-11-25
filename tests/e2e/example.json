@@ -1,0 +1,45 @@
+{
+    "All": {
+        "children": [
+            "BackEnd",
+            "FrontEnd",
+            "Staging"
+        ],
+        "vars": {
+            "minify": false,
+            "redis_host": "localhost",
+            "run_tests": false,
+            "use_redis": false,
+            "version": "develop"
+        }
+    },
+    "BackEnd": {
+        "hosts": [
+            "develop"
+        ],
+        "vars": {
+            "use_redis": true
+        }
+    },
+    "FrontEnd": {
+        "hosts": [
+            "develop"
+        ]
+    },
+    "Staging": {
+        "hosts": [
+            "develop"
+        ],
+        "vars": {
+            "run_tests": true
+        }
+    },
+    "_meta": {
+        "hostvars": {
+            "develop": {
+                "ansible_host": "develop_hostname",
+                "version": "develop"
+            }
+        }
+    }
+}

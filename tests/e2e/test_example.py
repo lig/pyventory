@@ -1,12 +1,18 @@
-from pathlib import Path
 import os
 import shlex
 import subprocess
 
+import pytest
 
-def test_example_inventory():
-    project_dir = Path(__file__).parents[2].absolute()
-    example_dir = project_dir.joinpath('tests', 'e2e', 'example')
+
+@pytest.fixture(scope='session')
+def example_inventory(tests_dir):
+    return open(str(tests_dir.joinpath('e2e', 'example.json')), 'rb').read()
+
+
+def test_example_inventory(tests_dir, example_inventory):
+    project_dir = tests_dir.parent
+    example_dir = tests_dir.joinpath('e2e', 'example')
     inventory_exe = example_dir.joinpath('hosts.py')
 
     result = subprocess.run(
@@ -16,4 +22,4 @@ def test_example_inventory():
             os.environ,
             PYTHONPATH='{}:{}'.format(project_dir, example_dir)))
 
-    assert result.stdout == b''
+    assert result.stdout == example_inventory
