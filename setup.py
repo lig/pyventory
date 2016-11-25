@@ -5,7 +5,7 @@ setup(
     name='Pyventory',
     use_scm_version=True,
     description='Ansible Inventory implementation that uses Python syntax',
-    url='https://gitlab.com/lig/pyventory',
+    url='https://github.com/lig/pyventory',
     author='Serge Matveenko',
     author_email='s@matveenko.ru',
     license='BSD',
