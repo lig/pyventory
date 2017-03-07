@@ -26,7 +26,7 @@ A short example of the `hosts.py` contents:
 
 ```python
 #!/usr/bin/env python
-from pyventory import export_inventory
+from pyventory import Asset, export_inventory
 
 class All(Asset):
     run_tests = False
