@@ -4,7 +4,7 @@ import sys
 import attr
 
 
-__all__ = ['InventoryItem', 'export_inventory']
+__all__ = ['Asset', 'export_inventory']
 
 
 @attr.s
@@ -84,7 +84,7 @@ class Inventory:
         return parent_names
 
 
-class InventoryItemMeta(type):
+class AssetMeta(type):
 
     def __new__(cls, name, bases, attrs):
         item = super().__new__(cls, name, bases, attrs)
@@ -94,16 +94,16 @@ class InventoryItemMeta(type):
         Inventory.register_group(item)
 
         for base in bases:
-            if not issubclass(base, InventoryItem):
+            if not issubclass(base, Asset):
                 continue
-            if base is InventoryItem:
+            if base is Asset:
                 continue
             Inventory.register_child(item, base)
 
         return item
 
 
-class InventoryItem(metaclass=InventoryItemMeta):
+class Asset(metaclass=AssetMeta):
     __template_vars = None  # typing: list
 
     def __init__(self, **kwargs):
@@ -123,7 +123,7 @@ def export_inventory(hosts, out=sys.stdout, indent=None, sort=True):
     inventory = Inventory({
         name: obj
         for name, obj in hosts.items()
-        if isinstance(obj, InventoryItem)})
+        if isinstance(obj, Asset)})
     json.dump(
         inventory.export(sort=sort),
         out,

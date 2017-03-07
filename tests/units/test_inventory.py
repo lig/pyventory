@@ -1,32 +1,32 @@
-from pyventory import InventoryItem, export_inventory
+from pyventory import Asset, export_inventory
 from io import StringIO
 
 
 def test_allow_mixins_for_inventory_items():
 
-    class BaseTestItem(InventoryItem):
+    class BaseTestAsset(Asset):
         pass
 
     class TestMixin:
         pass
 
-    class TestItem(TestMixin, BaseTestItem):
+    class TestAsset(TestMixin, BaseTestAsset):
         pass
 
-    test_item = TestItem()
+    test_asset = TestAsset()
 
     str_out = StringIO()
     export_inventory(locals(), out=str_out, indent=4)
 
     assert str_out.getvalue() == '''{
-    "BaseTestItem": {
+    "BaseTestAsset": {
         "hosts": [
-            "test_item"
+            "test_asset"
         ]
     },
     "_meta": {
         "hostvars": {
-            "test_item": {}
+            "test_asset": {}
         }
     }
 }'''
