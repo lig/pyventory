@@ -1,4 +1,5 @@
-# Pyventory Ansible Inventory implementation that uses Python syntax
+# Pyventory
+Ansible Inventory implementation that uses Python syntax
 
 ## Install
 
