@@ -7,7 +7,7 @@ Ansible Inventory implementation that uses Python syntax
 pip install pyventory
 ```   
 
-## Feature
+## Features
   
 * Modular inventory.
 * Assests inheritance using Python classes.
