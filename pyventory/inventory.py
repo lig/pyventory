@@ -28,7 +28,11 @@ class Inventory:
         self.hosts[name] = host._host_vars
 
         for group in host.__class__.__bases__:
-            group_name = group.__qualname__
+            group_name = group.__name__
+
+            # skip mixins
+            if group_name not in self.group_registry:
+                continue
 
             if group_name not in self.groups:
                 self.add_group(group_name)
@@ -62,12 +66,12 @@ class Inventory:
 
     @classmethod
     def register_group(cls, item):
-        cls.group_registry[item.__qualname__] = GroupData(
+        cls.group_registry[item.__name__] = GroupData(
             vars=item._group_vars())
 
     @classmethod
     def register_child(cls, item, parent):
-        cls.group_registry[parent.__qualname__].children.add(item.__qualname__)
+        cls.group_registry[parent.__name__].children.add(item.__name__)
 
     @classmethod
     def _get_parent_names(cls, name):
@@ -115,13 +119,13 @@ class InventoryItem(metaclass=InventoryItemMeta):
             if not name.startswith('_')}
 
 
-def export_inventory(hosts, indent=None, sort=True):
+def export_inventory(hosts, out=sys.stdout, indent=None, sort=True):
     inventory = Inventory({
         name: obj
         for name, obj in hosts.items()
         if isinstance(obj, InventoryItem)})
     json.dump(
         inventory.export(sort=sort),
-        sys.stdout,
+        out,
         indent=indent,
         sort_keys=sort)
