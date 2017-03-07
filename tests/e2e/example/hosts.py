@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 from pyventory import export_inventory
 
 from pyvars import *

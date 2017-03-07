@@ -21,4 +21,7 @@ def test_example_inventory(tests_dir, example_inventory):
             os.environ,
             PYTHONPATH='{}:{}'.format(project_dir, example_dir)))
 
-    assert result.decode() == example_inventory
+    # hack for py27 `json.dump()` behavior
+    result = '\n'.join([x.rstrip() for x in result.decode().split('\n')])
+
+    assert result == example_inventory
