@@ -2,7 +2,7 @@ import json
 import sys
 
 import attr
-
+import string
 
 __all__ = ['Asset', 'export_inventory']
 
@@ -105,10 +105,22 @@ class AssetMeta(type):
 
 
 class Asset(metaclass=AssetMeta):
-    __template_vars = None  # typing: list
 
     def __init__(self, **kwargs):
         var_data = self._group_vars()
+
+        for template_name, template_vars in self._template_map().items():
+            try:
+                template_data = {var: kwargs.pop(var) for var in template_vars}
+            except KeyError:
+                raise ValueError(
+                    'Not enough arguments for template `%s`: "%s"',
+                    template_name,
+                    var_data[template_name])
+
+            var_data[template_name] = var_data[template_name].format_map(
+                template_data)
+
         var_data.update(kwargs)
         self._host_vars = var_data
 
@@ -118,6 +130,24 @@ class Asset(metaclass=AssetMeta):
             name: value
             for name, value in vars(cls).items()
             if not name.startswith('_')}
+
+    @classmethod
+    def _template_map(cls):
+        formatter = string.Formatter()
+        template_map = {}
+
+        for name, value in cls._group_vars().items():
+            template_vars = [
+                chunk[1]
+                for chunk in formatter.parse(value)
+                if chunk[1] is not None]
+
+            if not template_vars:
+                continue
+
+            template_map[name] = template_vars
+
+        return template_map
 
 
 def export_inventory(hosts, out=sys.stdout, indent=None, sort=True):
