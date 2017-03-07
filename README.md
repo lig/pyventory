@@ -7,15 +7,15 @@ Ansible Inventory implementation that uses Python syntax
 pip install pyventory
 ```   
 
-## Featur e
+## Feature
   
-* Modular inventor  y.
-* Assests inheritance using Python classe s.
-* Support for multiple inheritance  .
-* Support for mixins  .
-* Support for vars templating using [Python string formatting](https://docs.python.org/3/library/string.html#format-specification-mini-language)  .
-* Python 3 support
-* Python 2 (2.7) support
+* Modular inventory.
+* Assests inheritance using Python classes.
+* Support for multiple inheritance.
+* Support for mixins.
+* Support for vars templating using [Python string formatting](https://docs.python.org/3/library/string.html#format-specification-mini-language).
+* Python 3 support.
+* Python 2 (2.7) support.
 
 
 ## Usage
