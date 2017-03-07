@@ -50,3 +50,5 @@ Run Ansible playbook with the `-i hosts.py` key:
 ```shell
 ansible-playbook -i hosts.py site.yml
 ```
+
+Notice that you need to have your inventory package in `PYTHONPATH`.
