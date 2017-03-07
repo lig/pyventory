@@ -1,20 +1,22 @@
 import json
+import string
 import sys
 
 import attr
+import six
 
 
-__all__ = ['InventoryItem', 'export_inventory']
+__all__ = ['Asset', 'export_inventory']
 
 
 @attr.s
-class GroupData:
+class GroupData(object):
     hosts = attr.ib(default=attr.Factory(set))
     vars = attr.ib(default=attr.Factory(dict))
     children = attr.ib(default=attr.Factory(set))
 
 
-class Inventory:
+class Inventory(object):
     group_registry = {}
 
     def __init__(self, hosts):
@@ -28,7 +30,11 @@ class Inventory:
         self.hosts[name] = host._host_vars
 
         for group in host.__class__.__bases__:
-            group_name = group.__qualname__
+            group_name = group.__name__
+
+            # skip mixins
+            if group_name not in self.group_registry:
+                continue
 
             if group_name not in self.groups:
                 self.add_group(group_name)
@@ -52,6 +58,7 @@ class Inventory:
             group['children'] = list(
                 set(group['children']).intersection(data.keys()))
             if sort:
+                group['hosts'].sort()
                 group['children'].sort()
             for attr_name in ('hosts', 'vars', 'children',):
                 if not group[attr_name]:
@@ -62,12 +69,12 @@ class Inventory:
 
     @classmethod
     def register_group(cls, item):
-        cls.group_registry[item.__qualname__] = GroupData(
+        cls.group_registry[item.__name__] = GroupData(
             vars=item._group_vars())
 
     @classmethod
     def register_child(cls, item, parent):
-        cls.group_registry[parent.__qualname__].children.add(item.__qualname__)
+        cls.group_registry[parent.__name__].children.add(item.__name__)
 
     @classmethod
     def _get_parent_names(cls, name):
@@ -80,30 +87,42 @@ class Inventory:
         return parent_names
 
 
-class InventoryItemMeta(type):
+class AssetMeta(type):
 
     def __new__(cls, name, bases, attrs):
-        item = super().__new__(cls, name, bases, attrs)
+        item = super(AssetMeta, cls).__new__(cls, name, bases, attrs)
         if not bases:
             return item
 
         Inventory.register_group(item)
 
         for base in bases:
-            if not issubclass(base, InventoryItem):
+            if not issubclass(base, Asset):
                 continue
-            if base is InventoryItem:
+            if base is Asset:
                 continue
             Inventory.register_child(item, base)
 
         return item
 
 
-class InventoryItem(metaclass=InventoryItemMeta):
-    __template_vars = None  # typing: list
+class Asset(six.with_metaclass(AssetMeta)):
 
     def __init__(self, **kwargs):
         var_data = self._group_vars()
+
+        for template_name, template_vars in self._template_map().items():
+            try:
+                template_data = {var: kwargs.pop(var) for var in template_vars}
+            except KeyError:
+                raise ValueError(
+                    'Not enough arguments for template `%s`: "%s"',
+                    template_name,
+                    var_data[template_name])
+
+            var_data[template_name] = var_data[template_name].format(
+                **template_data)
+
         var_data.update(kwargs)
         self._host_vars = var_data
 
@@ -114,14 +133,32 @@ class InventoryItem(metaclass=InventoryItemMeta):
             for name, value in vars(cls).items()
             if not name.startswith('_')}
 
+    @classmethod
+    def _template_map(cls):
+        formatter = string.Formatter()
+        template_map = {}
 
-def export_inventory(hosts, indent=None, sort=True):
+        for name, value in cls._group_vars().items():
+            template_vars = [
+                chunk[1]
+                for chunk in formatter.parse(value)
+                if chunk[1] is not None]
+
+            if not template_vars:
+                continue
+
+            template_map[name] = template_vars
+
+        return template_map
+
+
+def export_inventory(hosts, out=sys.stdout, indent=None, sort=True):
     inventory = Inventory({
         name: obj
         for name, obj in hosts.items()
-        if isinstance(obj, InventoryItem)})
+        if isinstance(obj, Asset)})
     json.dump(
         inventory.export(sort=sort),
-        sys.stdout,
+        out,
         indent=indent,
         sort_keys=sort)

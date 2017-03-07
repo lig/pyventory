@@ -3,6 +3,7 @@
         "children": [
             "BackEnd",
             "FrontEnd",
+            "Production",
             "Staging"
         ],
         "vars": {
@@ -15,7 +16,11 @@
     },
     "BackEnd": {
         "hosts": [
-            "develop"
+            "develop",
+            "develop_sidebranch",
+            "prod_backend1",
+            "prod_backend2",
+            "staging"
         ],
         "vars": {
             "use_redis": true
@@ -23,12 +28,31 @@
     },
     "FrontEnd": {
         "hosts": [
-            "develop"
+            "develop",
+            "develop_sidebranch",
+            "prod_frontend1",
+            "prod_frontend2",
+            "staging"
         ]
+    },
+    "Production": {
+        "hosts": [
+            "prod_backend1",
+            "prod_backend2",
+            "prod_frontend1",
+            "prod_frontend2"
+        ],
+        "vars": {
+            "minify": true,
+            "use_redis": true,
+            "version": "master"
+        }
     },
     "Staging": {
         "hosts": [
-            "develop"
+            "develop",
+            "develop_sidebranch",
+            "staging"
         ],
         "vars": {
             "run_tests": true
@@ -39,6 +63,28 @@
             "develop": {
                 "ansible_host": "develop_hostname",
                 "version": "develop"
+            },
+            "develop_sidebranch": {
+                "ansible_host": "sidebranch_hostname",
+                "version": "sidebranch_name"
+            },
+            "prod_backend1": {
+                "ansible_hostname": "app001.prod.dom",
+                "redis_host": "prod_redis_hostname"
+            },
+            "prod_backend2": {
+                "ansible_hostname": "app002.prod.dom",
+                "redis_host": "prod_redis_hostname"
+            },
+            "prod_frontend1": {
+                "ansible_hostname": "www001.prod.dom"
+            },
+            "prod_frontend2": {
+                "ansible_hostname": "www002.prod.dom"
+            },
+            "staging": {
+                "ansible_host": "master_hostname",
+                "version": "master"
             }
         }
     }

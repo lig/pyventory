@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture(scope='session')
 def example_inventory(tests_dir):
-    return open(str(tests_dir.joinpath('e2e', 'example.json')), 'rb').read()
+    return open(str(tests_dir.joinpath('e2e', 'example.json')), 'r').read()
 
 
 def test_example_inventory(tests_dir, example_inventory):
@@ -15,11 +15,13 @@ def test_example_inventory(tests_dir, example_inventory):
     example_dir = tests_dir.joinpath('e2e', 'example')
     inventory_exe = example_dir.joinpath('hosts.py')
 
-    result = subprocess.run(
+    result = subprocess.check_output(
         shlex.split(str(inventory_exe)),
-        stdout=subprocess.PIPE,
         env=dict(
             os.environ,
             PYTHONPATH='{}:{}'.format(project_dir, example_dir)))
 
-    assert result.stdout == example_inventory
+    # hack for py27 `json.dump()` behavior
+    result = '\n'.join([x.rstrip() for x in result.decode().split('\n')])
+
+    assert result == example_inventory

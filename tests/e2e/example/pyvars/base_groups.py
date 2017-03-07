@@ -1,7 +1,7 @@
-from pyventory import InventoryItem
+from pyventory import Asset
 
 
-class All(InventoryItem):
+class All(Asset):
     run_tests = False
     use_redis = False
     redis_host = 'localhost'
