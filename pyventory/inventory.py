@@ -1,20 +1,22 @@
 import json
+import string
 import sys
 
 import attr
-import string
+import six
+
 
 __all__ = ['Asset', 'export_inventory']
 
 
 @attr.s
-class GroupData:
+class GroupData(object):
     hosts = attr.ib(default=attr.Factory(set))
     vars = attr.ib(default=attr.Factory(dict))
     children = attr.ib(default=attr.Factory(set))
 
 
-class Inventory:
+class Inventory(object):
     group_registry = {}
 
     def __init__(self, hosts):
@@ -88,7 +90,7 @@ class Inventory:
 class AssetMeta(type):
 
     def __new__(cls, name, bases, attrs):
-        item = super().__new__(cls, name, bases, attrs)
+        item = super(AssetMeta, cls).__new__(cls, name, bases, attrs)
         if not bases:
             return item
 
@@ -104,7 +106,7 @@ class AssetMeta(type):
         return item
 
 
-class Asset(metaclass=AssetMeta):
+class Asset(six.with_metaclass(AssetMeta)):
 
     def __init__(self, **kwargs):
         var_data = self._group_vars()
@@ -118,8 +120,8 @@ class Asset(metaclass=AssetMeta):
                     template_name,
                     var_data[template_name])
 
-            var_data[template_name] = var_data[template_name].format_map(
-                template_data)
+            var_data[template_name] = var_data[template_name].format(
+                **template_data)
 
         var_data.update(kwargs)
         self._host_vars = var_data

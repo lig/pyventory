@@ -15,11 +15,10 @@ def test_example_inventory(tests_dir, example_inventory):
     example_dir = tests_dir.joinpath('e2e', 'example')
     inventory_exe = example_dir.joinpath('hosts.py')
 
-    result = subprocess.run(
+    result = subprocess.check_output(
         shlex.split(str(inventory_exe)),
-        stdout=subprocess.PIPE,
         env=dict(
             os.environ,
             PYTHONPATH='{}:{}'.format(project_dir, example_dir)))
 
-    assert result.stdout.decode() == example_inventory
+    assert result.decode() == example_inventory

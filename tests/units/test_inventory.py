@@ -1,6 +1,5 @@
-from io import StringIO
-
 import pytest
+import six
 
 from pyventory import Asset, export_inventory
 
@@ -10,7 +9,7 @@ def test_allow_mixins_for_inventory_items():
     class BaseTestAsset(Asset):
         pass
 
-    class TestMixin:
+    class TestMixin(object):
         pass
 
     class TestAsset(TestMixin, BaseTestAsset):
@@ -18,10 +17,13 @@ def test_allow_mixins_for_inventory_items():
 
     test_asset = TestAsset()
 
-    result = StringIO()
+    result = six.StringIO()
     export_inventory(locals(), out=result, indent=4)
 
-    assert result.getvalue() == '''{
+    # hack for py27 `json.dump()` behavior
+    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
+
+    assert result == '''{
     "BaseTestAsset": {
         "hosts": [
             "test_asset"
@@ -42,7 +44,7 @@ def test_allow_host_specific_vars():
 
     test_asset = TestAsset(foo='bar')
 
-    result = StringIO()
+    result = six.StringIO()
     export_inventory(locals(), out=result, indent=4)
 
     assert result.getvalue() == '''{
@@ -63,7 +65,7 @@ def test_allow_format_strings_as_values():
 
     test_asset = TestAsset(bar='ham')
 
-    result = StringIO()
+    result = six.StringIO()
     export_inventory(locals(), out=result, indent=4)
 
     assert result.getvalue() == '''{
