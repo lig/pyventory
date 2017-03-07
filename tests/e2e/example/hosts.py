@@ -5,10 +5,10 @@ from pyvars import *
 
 
 develop = DevelopHost()
-# develop_sidebranch = DevelopHost(
-#     ansible_host='sidebranch_hostname',
-#     version='sidebranch_name')
-# 
+develop_sidebranch = DevelopHost(
+    ansible_host='sidebranch_hostname',
+    version='sidebranch_name')
+
 # staging = StagingHost()
 # 
 # prod_backend1 = ProdBackEnd(num=1)

@@ -56,6 +56,7 @@ class Inventory:
             group['children'] = list(
                 set(group['children']).intersection(data.keys()))
             if sort:
+                group['hosts'].sort()
                 group['children'].sort()
             for attr_name in ('hosts', 'vars', 'children',):
                 if not group[attr_name]:

@@ -15,7 +15,8 @@
     },
     "BackEnd": {
         "hosts": [
-            "develop"
+            "develop",
+            "develop_sidebranch"
         ],
         "vars": {
             "use_redis": true
@@ -23,12 +24,14 @@
     },
     "FrontEnd": {
         "hosts": [
-            "develop"
+            "develop",
+            "develop_sidebranch"
         ]
     },
     "Staging": {
         "hosts": [
-            "develop"
+            "develop",
+            "develop_sidebranch"
         ],
         "vars": {
             "run_tests": true
@@ -39,6 +42,10 @@
             "develop": {
                 "ansible_host": "develop_hostname",
                 "version": "develop"
+            },
+            "develop_sidebranch": {
+                "ansible_host": "sidebranch_hostname",
+                "version": "sidebranch_name"
             }
         }
     }

@@ -15,10 +15,10 @@ def test_allow_mixins_for_inventory_items():
 
     test_asset = TestAsset()
 
-    str_out = StringIO()
-    export_inventory(locals(), out=str_out, indent=4)
+    result = StringIO()
+    export_inventory(locals(), out=result, indent=4)
 
-    assert str_out.getvalue() == '''{
+    assert result.getvalue() == '''{
     "BaseTestAsset": {
         "hosts": [
             "test_asset"
@@ -27,6 +27,27 @@ def test_allow_mixins_for_inventory_items():
     "_meta": {
         "hostvars": {
             "test_asset": {}
+        }
+    }
+}'''
+
+
+def test_allow_host_specific_vars():
+
+    class TestAsset(Asset):
+        pass
+
+    test_asset = TestAsset(foo='bar')
+
+    result = StringIO()
+    export_inventory(locals(), out=result, indent=4)
+
+    assert result.getvalue() == '''{
+    "_meta": {
+        "hostvars": {
+            "test_asset": {
+                "foo": "bar"
+            }
         }
     }
 }'''

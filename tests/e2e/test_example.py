@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture(scope='session')
 def example_inventory(tests_dir):
-    return open(str(tests_dir.joinpath('e2e', 'example.json')), 'rb').read()
+    return open(str(tests_dir.joinpath('e2e', 'example.json')), 'r').read()
 
 
 def test_example_inventory(tests_dir, example_inventory):
@@ -22,4 +22,4 @@ def test_example_inventory(tests_dir, example_inventory):
             os.environ,
             PYTHONPATH='{}:{}'.format(project_dir, example_dir)))
 
-    assert result.stdout == example_inventory
+    assert result.stdout.decode() == example_inventory
