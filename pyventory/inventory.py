@@ -1,12 +1,7 @@
-import json
-import string
-import sys
-
 import attr
-import six
 
 
-__all__ = ['Asset', 'export_inventory']
+__all__ = []
 
 
 @attr.s
@@ -85,83 +80,3 @@ class Inventory(object):
                 parent_names.add(group_name)
 
         return parent_names
-
-
-class AssetMeta(type):
-
-    def __new__(cls, name, bases, attrs):
-        item = super(AssetMeta, cls).__new__(cls, name, bases, attrs)
-        if not bases:
-            return item
-
-        Inventory.register_group(item)
-
-        for base in bases:
-            if not issubclass(base, Asset):
-                continue
-            if base is Asset:
-                continue
-            Inventory.register_child(item, base)
-
-        return item
-
-
-class Asset(six.with_metaclass(AssetMeta)):
-
-    def __init__(self, **kwargs):
-        var_data = self._group_vars()
-
-        for template_name, template_vars in self._template_map().items():
-            try:
-                template_data = {var: kwargs.pop(var) for var in template_vars}
-            except KeyError:
-                raise ValueError(
-                    'Not enough arguments for template `%s`: "%s"',
-                    template_name,
-                    var_data[template_name])
-
-            var_data[template_name] = var_data[template_name].format(
-                **template_data)
-
-        var_data.update(kwargs)
-        self._host_vars = var_data
-
-    @classmethod
-    def _group_vars(cls):
-        return {
-            name: value
-            for name, value in vars(cls).items()
-            if not name.startswith('_')}
-
-    @classmethod
-    def _template_map(cls):
-        formatter = string.Formatter()
-        template_map = {}
-
-        for name, value in cls._group_vars().items():
-            if not isinstance(value, six.string_types):
-                continue
-
-            template_vars = [
-                chunk[1]
-                for chunk in formatter.parse(value)
-                if chunk[1] is not None]
-
-            if not template_vars:
-                continue
-
-            template_map[name] = template_vars
-
-        return template_map
-
-
-def export_inventory(hosts, out=sys.stdout, indent=None, sort=True):
-    inventory = Inventory({
-        name: obj
-        for name, obj in hosts.items()
-        if isinstance(obj, Asset)})
-    json.dump(
-        inventory.export(sort=sort),
-        out,
-        indent=indent,
-        sort_keys=sort)

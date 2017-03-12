@@ -1,1 +1,2 @@
-from pyventory.inventory import *
+from pyventory.api import *
+from pyventory.asset import *
