@@ -115,3 +115,65 @@ def test_inheritance_with_format():
         }
     }
 }'''
+
+
+def test_deep_multiple_inheritance_propagation():
+
+    class Level1Asset1(Asset):
+        foo = 'Level1Asset1 foo value'
+
+    class Level1Asset2(Asset):
+        foo = 'Level1Asset2 foo value'
+        bar = 'Level1Asset2 bar value'
+
+    class Level2Asset3(Level1Asset1, Level1Asset2):
+        pass
+
+    class Level3Asset4(Level2Asset3):
+        baz = 'Level3Asset4 baz value'
+
+    level3_asset4 = Level3Asset4()
+
+    result = six.StringIO()
+    export_inventory(locals(), out=result, indent=4)
+
+    # hack for py27 `json.dump()` behavior
+    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
+
+    assert result == '''{
+    "Level1Asset1": {
+        "children": [
+            "Level2Asset3"
+        ],
+        "vars": {
+            "foo": "Level1Asset1 foo value"
+        }
+    },
+    "Level1Asset2": {
+        "children": [
+            "Level2Asset3"
+        ],
+        "vars": {
+            "bar": "Level1Asset2 bar value",
+            "foo": "Level1Asset2 foo value"
+        }
+    },
+    "Level2Asset3": {
+        "hosts": [
+            "level3_asset4"
+        ],
+        "vars": {
+            "foo": "Level1Asset1 foo value"
+            "bar": "Level1Asset2 bar value",
+        }
+    },
+    "_meta": {
+        "hostvars": {
+            "level3_asset4": {
+                "foo": "Level1Asset1 foo value"
+                "bar": "Level1Asset2 bar value",
+                "baz": "Level3Asset4 baz value"
+            }
+        }
+    }
+}'''
