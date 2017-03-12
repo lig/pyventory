@@ -88,30 +88,29 @@ def test_require_arguments_for_format_strings():
         TestAsset()
 
 
-def test_do_not_format_non_string_vars():
+def test_inheritance_with_format():
 
-    class TestAsset(Asset):
-        foo = [
-            'bar',
-            'baz',
-        ]
+    class ParentAsset(Asset):
+        foo = '{bar}'
 
-    test_asset = TestAsset()
+    class ChildAsset(ParentAsset):
+        pass
+
+    child_asset = ChildAsset(bar='ham')
 
     result = six.StringIO()
     export_inventory(locals(), out=result, indent=4)
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
+    assert result.getvalue() == '''{
+    "ParentAsset": {
+        "hosts": [
+            "child_asset"
+        ]
+    },
     "_meta": {
         "hostvars": {
-            "test_asset": {
-                "foo": [
-                    "bar",
-                    "baz"
-                ]
+            "child_asset": {
+                "foo": "ham"
             }
         }
     }
