@@ -2,7 +2,7 @@ import string
 
 import six
 
-from pyventory.inventory import Inventory
+from pyventory.registry import Registry
 
 
 __all__ = ['Asset']
@@ -15,14 +15,14 @@ class AssetMeta(type):
         if not bases:
             return item
 
-        Inventory.register_group(item)
+        Registry.register_asset(item)
 
         for base in bases:
             if not issubclass(base, Asset):
                 continue
             if base is Asset:
                 continue
-            Inventory.register_child(item, base)
+            Registry.register_child(item, base)
 
         return item
 
@@ -30,7 +30,7 @@ class AssetMeta(type):
 class Asset(six.with_metaclass(AssetMeta)):
 
     def __init__(self, **kwargs):
-        var_data = self._group_vars()
+        var_data = self._asset_vars()
 
         for template_name, template_vars in self._template_map().items():
             try:
@@ -48,7 +48,7 @@ class Asset(six.with_metaclass(AssetMeta)):
         self._host_vars = var_data
 
     @classmethod
-    def _group_vars(cls):
+    def _asset_vars(cls):
         return {
             name: value
             for name, value in vars(cls).items()
@@ -59,7 +59,7 @@ class Asset(six.with_metaclass(AssetMeta)):
         formatter = string.Formatter()
         template_map = {}
 
-        for name, value in cls._group_vars().items():
+        for name, value in cls._asset_vars().items():
             template_vars = [
                 chunk[1]
                 for chunk in formatter.parse(value)
