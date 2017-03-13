@@ -1,4 +1,4 @@
-from pyventory.cli import main
+from pyventory.cli.pyventory import main
 
 
 def test_cli_fake():

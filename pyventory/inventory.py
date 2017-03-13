@@ -139,6 +139,9 @@ class Asset(six.with_metaclass(AssetMeta)):
         template_map = {}
 
         for name, value in cls._group_vars().items():
+            if not isinstance(value, six.string_types):
+                continue
+
             template_vars = [
                 chunk[1]
                 for chunk in formatter.parse(value)
