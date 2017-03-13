@@ -86,3 +86,33 @@ def test_require_arguments_for_format_strings():
 
     with pytest.raises(ValueError):
         TestAsset()
+
+
+def test_do_not_format_non_string_vars():
+
+    class TestAsset(Asset):
+        foo = [
+            'bar',
+            'baz',
+        ]
+
+    test_asset = TestAsset()
+
+    result = six.StringIO()
+    export_inventory(locals(), out=result, indent=4)
+
+    # hack for py27 `json.dump()` behavior
+    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
+
+    assert result == '''{
+    "_meta": {
+        "hostvars": {
+            "test_asset": {
+                "foo": [
+                    "bar",
+                    "baz"
+                ]
+            }
+        }
+    }
+}'''
