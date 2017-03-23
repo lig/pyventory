@@ -3,7 +3,7 @@ import sys
 from setuptools import setup, find_packages
 
 
-install_requires = ['six', 'attrs']
+install_requires = ['six', 'attrs', 'ordered-set']
 
 if sys.version_info < (3, 4):
     install_requires.append('pathlib')
