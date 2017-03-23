@@ -1,73 +1,57 @@
-import string
+from collections import OrderedDict, Mapping, Sequence
 
 import six
 
-from pyventory.registry import Registry
+from pyventory.errors import ValueSubstitutionError
 
 
 __all__ = ['Asset']
 
 
-class AssetMeta(type):
-
-    def __new__(cls, name, bases, attrs):
-        item = super(AssetMeta, cls).__new__(cls, name, bases, attrs)
-        if not bases:
-            return item
-
-        Registry.register_asset(item)
-
-        for base in bases:
-            if not issubclass(base, Asset):
-                continue
-            if base is Asset:
-                continue
-            Registry.register_child(item, base)
-
-        return item
-
-
-class Asset(six.with_metaclass(AssetMeta)):
+class Asset(object):
 
     def __init__(self, **kwargs):
-        var_data = self._asset_vars()
+        for name, value in kwargs.items():
+            setattr(self, name, value)
 
-        for template_name, template_vars in self._template_map().items():
+    def _vars(self):
+        return self.__build_vars(self, strict_format=True)
+
+    @classmethod
+    def _cls_vars(cls):
+        return cls.__build_vars(cls)
+
+    @classmethod
+    def _name(cls):
+        return cls.__name__
+
+    @classmethod
+    def __build_vars(cls, obj, strict_format=False):
+        _vars = OrderedDict(
+            (attr_name, getattr(obj, attr_name))
+            for attr_name in dir(obj)
+            if not attr_name.startswith('_'))
+
+        for name, value in _vars.copy().items():
             try:
-                template_data = {var: kwargs.pop(var) for var in template_vars}
-            except KeyError:
-                raise ValueError(
-                    'Not enough arguments for template `%s`: "%s"',
-                    template_name,
-                    var_data[template_name])
+                _vars[name] = cls.__format_value(value, _vars)
+            except KeyError as e:
+                if strict_format:
+                    raise ValueSubstitutionError(
+                        'Var "{}" must be available for "{}" asset instance',
+                        e.args[0], obj._name())
+                else:
+                    del _vars[name]
 
-            var_data[template_name] = var_data[template_name].format(
-                **template_data)
-
-        var_data.update(kwargs)
-        self._host_vars = var_data
+        return _vars
 
     @classmethod
-    def _asset_vars(cls):
-        return {
-            name: value
-            for name, value in vars(cls).items()
-            if not name.startswith('_')}
-
-    @classmethod
-    def _template_map(cls):
-        formatter = string.Formatter()
-        template_map = {}
-
-        for name, value in cls._asset_vars().items():
-            template_vars = [
-                chunk[1]
-                for chunk in formatter.parse(value)
-                if chunk[1] is not None]
-
-            if not template_vars:
-                continue
-
-            template_map[name] = template_vars
-
-        return template_map
+    def __format_value(cls, value, context):
+        if isinstance(value, six.string_types):
+            return value.format(**context)
+        if isinstance(value, Mapping):
+            return OrderedDict(
+                (k, cls.__format_value(v, context)) for k, v in value.items())
+        if isinstance(value, Sequence):
+            return [cls.__format_value(v, context) for v in value]
+        return value

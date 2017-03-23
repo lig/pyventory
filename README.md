@@ -26,7 +26,7 @@ A short example of the `hosts.py` contents:
 
 ```python
 #!/usr/bin/env python
-from pyventory import Asset, export_inventory
+from pyventory import Asset, ansible_inventory
 
 class All(Asset):
     run_tests = False
@@ -40,7 +40,7 @@ class Staging(All):
 
 staging = Staging()
 
-export_inventory(locals())
+ansible_inventory(locals())
 ```
 
 Consider a [more complex example](tests/e2e/example) which passes the following [json output](tests/e2e/example.json) to Ansible.

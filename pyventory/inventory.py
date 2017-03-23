@@ -1,61 +1,51 @@
+from collections import OrderedDict
+
+from ordered_set import OrderedSet
 import attr
 
-from pyventory.registry import AssetData, Registry
+from pyventory.asset import Asset
 
 
 __all__ = []
 
 
 @attr.s
-class GroupData(AssetData):
-    hosts = attr.ib(default=attr.Factory(set))
+class GroupData(object):
+    vars = attr.ib(default=attr.Factory(OrderedDict))
+    children = attr.ib(default=attr.Factory(OrderedSet))
+    hosts = attr.ib(default=attr.Factory(OrderedSet))
 
 
 class Inventory(object):
 
     def __init__(self, hosts):
-        self.groups = {}
-        self.hosts = {}
+        self.groups = OrderedDict()
+        self.hosts = OrderedDict()
 
-        for name, host in hosts.items():
+        for name, host in sorted(hosts.items()):
             self.add_host(name, host)
 
     def add_host(self, name, host):
-        self.hosts[name] = host._host_vars
-
-        for asset in host.__class__.__bases__:
-            asset_name = asset.__name__
-
-            # skip mixins
-            if not Registry.is_registered(asset_name):
-                continue
-
-            if asset_name not in self.groups:
-                self.add_group(asset_name)
-
-            self.groups[asset_name].hosts.add(name)
-
-    def add_group(self, name):
-        if name in self.groups:
+        if not isinstance(host, Asset):
             return
 
-        self.groups[name] = GroupData(**attr.asdict(Registry.get_asset(name)))
+        self.hosts[name] = host._vars()
+        self.add_group(host.__class__)
+        self.groups[host._name()].hosts.add(name)
 
-        for parent_name in Registry.get_parent_names(name):
-            self.add_group(parent_name)
+    def add_group(self, asset):
+        if asset._name() in self.groups:
+            return
 
-    def export(self, sort=False):
-        data = {
-            name: attr.asdict(group) for name, group in self.groups.items()}
-        for group in data.values():
-            group['children'] = list(
-                set(group['children']).intersection(data.keys()))
-            if sort:
-                group['hosts'].sort()
-                group['children'].sort()
-            for attr_name in ('hosts', 'vars', 'children',):
-                if not group[attr_name]:
-                    del group[attr_name]
+        for parent_asset in asset.__bases__:
+            # skip mixins
+            if not issubclass(parent_asset, Asset):
+                continue
+            # skip Asset itself and object
+            if parent_asset in (Asset, object,):
+                continue
 
-        data['_meta'] = {'hostvars': self.hosts.copy()}
-        return data
+            self.add_group(parent_asset)
+            self.groups[parent_asset._name()].children.add(asset._name())
+
+        self.groups[asset._name()] = GroupData(vars=asset._cls_vars())
