@@ -1,89 +1,186 @@
 {
     "All": {
-        "children": [
-            "BackEnd",
-            "FrontEnd",
-            "Production",
-            "Staging"
-        ],
         "vars": {
             "minify": false,
             "redis_host": "localhost",
             "run_tests": false,
             "use_redis": false,
             "version": "develop"
-        }
+        },
+        "children": [
+            "Staging",
+            "BackEnd",
+            "FrontEnd",
+            "Production"
+        ]
+    },
+    "Staging": {
+        "vars": {
+            "minify": false,
+            "redis_host": "localhost",
+            "run_tests": true,
+            "use_redis": false,
+            "version": "develop"
+        },
+        "children": [
+            "DevelopHost",
+            "StagingHost"
+        ]
     },
     "BackEnd": {
-        "hosts": [
-            "develop",
-            "develop_sidebranch",
-            "prod_backend1",
-            "prod_backend2",
-            "staging"
-        ],
         "vars": {
-            "use_redis": true
-        }
+            "minify": false,
+            "redis_host": "localhost",
+            "run_tests": false,
+            "use_redis": true,
+            "version": "develop"
+        },
+        "children": [
+            "DevelopHost",
+            "ProdBackEnd",
+            "StagingHost"
+        ]
     },
     "FrontEnd": {
+        "vars": {
+            "minify": false,
+            "redis_host": "localhost",
+            "run_tests": false,
+            "use_redis": false,
+            "version": "develop"
+        },
+        "children": [
+            "DevelopHost",
+            "ProdFrontEnd",
+            "StagingHost"
+        ]
+    },
+    "DevelopHost": {
+        "vars": {
+            "ansible_host": "develop_hostname",
+            "minify": false,
+            "redis_host": "localhost",
+            "run_tests": true,
+            "use_redis": true,
+            "version": "develop"
+        },
         "hosts": [
             "develop",
-            "develop_sidebranch",
-            "prod_frontend1",
-            "prod_frontend2",
-            "staging"
+            "develop_sidebranch"
         ]
     },
     "Production": {
-        "hosts": [
-            "prod_backend1",
-            "prod_backend2",
-            "prod_frontend1",
-            "prod_frontend2"
-        ],
         "vars": {
             "minify": true,
+            "redis_host": "localhost",
+            "run_tests": false,
             "use_redis": true,
             "version": "master"
-        }
+        },
+        "children": [
+            "ProdBackEnd",
+            "ProdFrontEnd"
+        ]
     },
-    "Staging": {
-        "hosts": [
-            "develop",
-            "develop_sidebranch",
-            "staging"
-        ],
+    "ProdBackEnd": {
         "vars": {
-            "run_tests": true
-        }
+            "minify": true,
+            "redis_host": "prod_redis_hostname",
+            "run_tests": false,
+            "use_redis": true,
+            "version": "master"
+        },
+        "hosts": [
+            "prod_backend1",
+            "prod_backend2"
+        ]
+    },
+    "ProdFrontEnd": {
+        "vars": {
+            "minify": true,
+            "redis_host": "localhost",
+            "run_tests": false,
+            "use_redis": true,
+            "version": "master"
+        },
+        "hosts": [
+            "prod_frontend1",
+            "prod_frontend2"
+        ]
+    },
+    "StagingHost": {
+        "vars": {
+            "ansible_host": "master_hostname",
+            "minify": false,
+            "redis_host": "localhost",
+            "run_tests": true,
+            "use_redis": true,
+            "version": "master"
+        },
+        "hosts": [
+            "staging"
+        ]
     },
     "_meta": {
         "hostvars": {
             "develop": {
                 "ansible_host": "develop_hostname",
+                "minify": false,
+                "redis_host": "localhost",
+                "run_tests": true,
+                "use_redis": true,
                 "version": "develop"
             },
             "develop_sidebranch": {
                 "ansible_host": "sidebranch_hostname",
+                "minify": false,
+                "redis_host": "localhost",
+                "run_tests": true,
+                "use_redis": true,
                 "version": "sidebranch_name"
             },
             "prod_backend1": {
                 "ansible_hostname": "app001.prod.dom",
-                "redis_host": "prod_redis_hostname"
+                "minify": true,
+                "num": 1,
+                "redis_host": "prod_redis_hostname",
+                "run_tests": false,
+                "use_redis": true,
+                "version": "master"
             },
             "prod_backend2": {
                 "ansible_hostname": "app002.prod.dom",
-                "redis_host": "prod_redis_hostname"
+                "minify": true,
+                "num": 2,
+                "redis_host": "prod_redis_hostname",
+                "run_tests": false,
+                "use_redis": true,
+                "version": "master"
             },
             "prod_frontend1": {
-                "ansible_hostname": "www001.prod.dom"
+                "ansible_hostname": "www001.prod.dom",
+                "minify": true,
+                "num": 1,
+                "redis_host": "localhost",
+                "run_tests": false,
+                "use_redis": true,
+                "version": "master"
             },
             "prod_frontend2": {
-                "ansible_hostname": "www002.prod.dom"
+                "ansible_hostname": "www002.prod.dom",
+                "minify": true,
+                "num": 2,
+                "redis_host": "localhost",
+                "run_tests": false,
+                "use_redis": true,
+                "version": "master"
             },
             "staging": {
                 "ansible_host": "master_hostname",
+                "minify": false,
+                "redis_host": "localhost",
+                "run_tests": true,
+                "use_redis": true,
                 "version": "master"
             }
         }

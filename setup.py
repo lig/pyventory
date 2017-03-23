@@ -3,7 +3,7 @@ import sys
 from setuptools import setup, find_packages
 
 
-install_requires = ['six', 'attrs']
+install_requires = ['six', 'attrs', 'ordered-set']
 
 if sys.version_info < (3, 4):
     install_requires.append('pathlib')
@@ -17,7 +17,7 @@ setup(
     author_email='s@matveenko.ru',
     license='BSD',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Stable',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: BSD License',

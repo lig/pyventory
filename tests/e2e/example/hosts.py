@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from pyventory import export_inventory
+from pyventory import ansible_inventory
 
 from pyvars import *
 
@@ -16,4 +16,4 @@ prod_backend2 = ProdBackEnd(num=2)
 prod_frontend1 = ProdFrontEnd(num=1)
 prod_frontend2 = ProdFrontEnd(num=2)
 
-export_inventory(locals(), indent=4)
+ansible_inventory(locals(), indent=4)
