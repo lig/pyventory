@@ -17,7 +17,7 @@ setup(
     author_email='s@matveenko.ru',
     license='BSD',
     classifiers=[
-        'Development Status :: 5 - Stable',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: BSD License',
