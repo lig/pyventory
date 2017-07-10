@@ -1,8 +1,7 @@
 import pytest
 import six
 
-from pyventory import Asset, ansible_inventory
-from pyventory.errors import ValueSubstitutionError
+from pyventory import Asset, ansible_inventory, errors
 
 
 def test_allow_mixins_for_inventory_items():
@@ -209,7 +208,7 @@ def test_require_arguments_for_format_strings():
 
     test_asset = TestAsset()
 
-    with pytest.raises(ValueSubstitutionError):
+    with pytest.raises(errors.ValueSubstitutionError):
         ansible_inventory(locals())
 
 
@@ -398,3 +397,57 @@ def test_multiple_children():
         }
     }
 }'''
+
+
+def test_allow_notimplemented_value():
+
+    class BaseTestAsset(Asset):
+        foo = NotImplemented
+
+    class TestAsset(BaseTestAsset):
+        foo = 'bar'
+
+    test_asset = TestAsset()
+
+    result = six.StringIO()
+    ansible_inventory(locals(), out=result, indent=4)
+
+    # hack for py27 `json.dump()` behavior
+    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
+
+    assert result == '''{
+    "BaseTestAsset": {
+        "children": [
+            "TestAsset"
+        ]
+    },
+    "TestAsset": {
+        "vars": {
+            "foo": "bar"
+        },
+        "hosts": [
+            "test_asset"
+        ]
+    },
+    "_meta": {
+        "hostvars": {
+            "test_asset": {
+                "foo": "bar"
+            }
+        }
+    }
+}'''
+
+
+def test_raise_notimplemented_value_in_host():
+
+    class BaseTestAsset(Asset):
+        foo = NotImplemented
+
+    class TestAsset(BaseTestAsset):
+        pass
+
+    test_asset = TestAsset()
+
+    with pytest.raises(errors.PropertyIsNotImplementedError):
+        ansible_inventory(locals())
