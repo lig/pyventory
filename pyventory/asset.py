@@ -2,7 +2,7 @@ from collections import OrderedDict, Mapping, Sequence
 
 import six
 
-from pyventory.errors import ValueSubstitutionError
+from pyventory import errors
 
 
 __all__ = ['Asset']
@@ -33,11 +33,21 @@ class Asset(object):
             if not attr_name.startswith('_'))
 
         for name, value in _vars.copy().items():
+
+            if value is NotImplemented:
+                if strict_format:
+                    raise errors.PropertyIsNotImplementedError(
+                        'Var "{}" is not implemented in "{}" asset instance',
+                        name, obj._name())
+                else:
+                    del _vars[name]
+                    continue
+
             try:
                 _vars[name] = cls.__format_value(value, _vars)
             except KeyError as e:
                 if strict_format:
-                    raise ValueSubstitutionError(
+                    raise errors.ValueSubstitutionError(
                         'Var "{}" must be available for "{}" asset instance',
                         e.args[0], obj._name())
                 else:
