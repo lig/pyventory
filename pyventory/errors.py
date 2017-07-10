@@ -12,3 +12,7 @@ class PyventoryError(Exception):
 
 class ValueSubstitutionError(PyventoryError):
     pass
+
+
+class PropertyIsNotImplementedError(PyventoryError):
+    pass
