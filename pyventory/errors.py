@@ -10,9 +10,13 @@ class PyventoryError(Exception):
         return self.args[0].format(*self.args[1:])
 
 
+class PropertyIsNotImplementedError(PyventoryError):
+    pass
+
+
 class ValueSubstitutionError(PyventoryError):
     pass
 
 
-class PropertyIsNotImplementedError(PyventoryError):
+class ValueSubstitutionInfiniteLoopError(PyventoryError):
     pass

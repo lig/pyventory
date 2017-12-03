@@ -451,3 +451,84 @@ def test_raise_notimplemented_value_in_host():
 
     with pytest.raises(errors.PropertyIsNotImplementedError):
         ansible_inventory(locals())
+
+
+def test_string_format_does_not_miss_values():
+
+    class BaseTestAsset(Asset):
+        baz = 'baz-value'
+
+    class TestAsset1(BaseTestAsset):
+        bar = '{baz}'
+        foo = '{bar}'
+
+    class TestAsset2(BaseTestAsset):
+        bar = '{foo}'
+        foo = '{baz}'
+
+    test_asset_1 = TestAsset1()
+    test_asset_2 = TestAsset2()
+
+    result = six.StringIO()
+    ansible_inventory(locals(), out=result, indent=4)
+
+    # hack for py27 `json.dump()` behavior
+    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
+
+    assert result == '''{
+    "BaseTestAsset": {
+        "vars": {
+            "baz": "baz-value"
+        },
+        "children": [
+            "TestAsset1",
+            "TestAsset2"
+        ]
+    },
+    "TestAsset1": {
+        "vars": {
+            "bar": "baz-value",
+            "baz": "baz-value",
+            "foo": "baz-value"
+        },
+        "hosts": [
+            "test_asset_1"
+        ]
+    },
+    "TestAsset2": {
+        "vars": {
+            "bar": "baz-value",
+            "baz": "baz-value",
+            "foo": "baz-value"
+        },
+        "hosts": [
+            "test_asset_2"
+        ]
+    },
+    "_meta": {
+        "hostvars": {
+            "test_asset_1": {
+                "bar": "baz-value",
+                "baz": "baz-value",
+                "foo": "baz-value"
+            },
+            "test_asset_2": {
+                "bar": "baz-value",
+                "baz": "baz-value",
+                "foo": "baz-value"
+            }
+        }
+    }
+}''', result
+
+
+def test_string_format_detects_infinite_loop():
+
+    class TestAsset(Asset):
+        bar = '{foo}'
+        foo = '{bar}'
+
+    test_asset = TestAsset()
+
+    with pytest.raises(errors.ValueSubstitutionInfiniteLoopError):
+        ansible_inventory(locals())

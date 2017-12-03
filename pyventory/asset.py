@@ -1,14 +1,14 @@
-from collections import OrderedDict, Mapping, Sequence
+import re
+from collections import Mapping, OrderedDict, Sequence
 
 import six
-
 from pyventory import errors
-
 
 __all__ = ['Asset']
 
 
 class Asset(object):
+    _string_format_regex = re.compile(r'{([\w_]+)}')
 
     def __init__(self, **kwargs):
         for name, value in kwargs.items():
@@ -33,35 +33,44 @@ class Asset(object):
             if not attr_name.startswith('_'))
 
         for name, value in _vars.copy().items():
-
-            if value is NotImplemented:
+            try:
+                _vars[name] = cls.__format_value(value, _vars, name)
+            except NotImplementedError:
                 if strict_format:
                     raise errors.PropertyIsNotImplementedError(
                         'Var "{}" is not implemented in "{}" asset instance',
                         name, obj._name())
                 else:
                     del _vars[name]
-                    continue
-
-            try:
-                _vars[name] = cls.__format_value(value, _vars)
             except KeyError as e:
                 if strict_format:
                     raise errors.ValueSubstitutionError(
-                        'Var "{}" must be available for "{}" asset instance',
+                        'Attribute "{}" must be available for "{}" asset instance',
                         e.args[0], obj._name())
                 else:
                     del _vars[name]
+            except errors.ValueSubstitutionInfiniteLoopError:
+                raise errors.ValueSubstitutionInfiniteLoopError(
+                    'Attribute "{}" has an infinite string substitution'
+                    ' loop for "{}" asset instance',
+                    name, obj._name())
 
         return _vars
 
     @classmethod
-    def __format_value(cls, value, context):
+    def __format_value(cls, value, context, start_key):
+        if value is NotImplemented:
+            raise NotImplementedError
         if isinstance(value, six.string_types):
+            for key in cls._string_format_regex.findall(value):
+                if key == start_key:
+                    raise errors.ValueSubstitutionInfiniteLoopError
+                context[key] = cls.__format_value(
+                    context[key], context, start_key)
             return value.format(**context)
         if isinstance(value, Mapping):
             return OrderedDict(
-                (k, cls.__format_value(v, context)) for k, v in value.items())
+                (k, cls.__format_value(v, context, start_key)) for k, v in value.items())
         if isinstance(value, Sequence):
-            return [cls.__format_value(v, context) for v in value]
+            return [cls.__format_value(v, context, start_key) for v in value]
         return value
