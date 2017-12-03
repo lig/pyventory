@@ -7,12 +7,12 @@ import pytest
 
 @pytest.fixture(scope='session')
 def example_inventory(tests_dir):
-    return open(str(tests_dir.joinpath('e2e', 'example.json')), 'r').read()
+    return open(str(tests_dir.joinpath('example.json')), 'r').read()
 
 
 def test_example_inventory(tests_dir, example_inventory):
     project_dir = tests_dir.parent
-    example_dir = tests_dir.joinpath('e2e', 'example')
+    example_dir = tests_dir.joinpath('example')
     inventory_exe = example_dir.joinpath('hosts.py')
 
     result = subprocess.check_output(
