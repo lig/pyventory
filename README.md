@@ -43,7 +43,7 @@ staging = Staging()
 ansible_inventory(locals())
 ```
 
-Consider a [more complex example](tests/e2e/example) which passes the following [json output](tests/e2e/example.json) to Ansible.
+Consider a [more complex example](tests/example) which passes the following [json output](tests/example.json) to Ansible.
 
 Run Ansible playbook with the `-i hosts.py` key:
 
