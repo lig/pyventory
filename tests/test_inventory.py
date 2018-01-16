@@ -1,7 +1,7 @@
 import pytest
 import six
 
-from pyventory import Asset, ansible_inventory, errors
+from pyventory import Asset, errors, pyventory_data
 
 
 def test_allow_mixins_for_inventory_items():
@@ -17,29 +17,25 @@ def test_allow_mixins_for_inventory_items():
 
     test_asset = TestAsset()
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.BaseTestAsset": {
-        "children": [
-            "test_inventory.TestAsset"
-        ]
-    },
-    "test_inventory.TestAsset": {
-        "hosts": [
-            "test_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+    assert result == {
+        'assets': {
+            "test_inventory.BaseTestAsset": {
+                "children": [
+                    "test_inventory.TestAsset"
+                ],
+            },
+            "test_inventory.TestAsset": {
+                "hosts": [
+                    "test_asset",
+                ],
+            },
+        },
+        "hosts": {
             "test_asset": {}
-        }
+        },
     }
-}'''
 
 
 def test_allow_host_specific_vars():
@@ -49,26 +45,22 @@ def test_allow_host_specific_vars():
 
     test_asset = TestAsset(foo='bar')
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.TestAsset": {
-        "hosts": [
-            "test_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+    assert result == {
+        'assets': {
+            "test_inventory.TestAsset": {
+                "hosts": [
+                    "test_asset",
+                ],
+            },
+        },
+        "hosts": {
             "test_asset": {
                 "foo": "bar"
-            }
-        }
+            },
+        },
     }
-}'''
 
 
 def test_allow_format_strings_as_values():
@@ -78,27 +70,23 @@ def test_allow_format_strings_as_values():
 
     test_asset = TestAsset(bar='ham')
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.TestAsset": {
-        "hosts": [
-            "test_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+    assert result == {
+        'assets': {
+            "test_inventory.TestAsset": {
+                "hosts": [
+                    "test_asset"
+                ]
+            },
+        },
+        "hosts": {
             "test_asset": {
                 "bar": "ham",
                 "foo": "test_ham"
             }
         }
     }
-}'''
 
 
 def test_allow_mapping_of_format_strings_as_values():
@@ -110,20 +98,17 @@ def test_allow_mapping_of_format_strings_as_values():
 
     test_asset = TestAsset(bar='ham')
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.TestAsset": {
-        "hosts": [
-            "test_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+    assert result == {
+        'assets': {
+            "test_inventory.TestAsset": {
+                "hosts": [
+                    "test_asset"
+                ]
+            },
+        },
+        "hosts": {
             "test_asset": {
                 "bar": "ham",
                 "foo": {
@@ -132,7 +117,6 @@ def test_allow_mapping_of_format_strings_as_values():
             }
         }
     }
-}'''
 
 
 def test_allow_sequence_of_format_strings_as_values():
@@ -142,20 +126,17 @@ def test_allow_sequence_of_format_strings_as_values():
 
     test_asset = TestAsset(bar='ham')
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.TestAsset": {
-        "hosts": [
-            "test_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+    assert result == {
+        'assets': {
+            "test_inventory.TestAsset": {
+                "hosts": [
+                    "test_asset"
+                ]
+            },
+        },
+        "hosts": {
             "test_asset": {
                 "bar": "ham",
                 "foo": [
@@ -165,7 +146,6 @@ def test_allow_sequence_of_format_strings_as_values():
             }
         }
     }
-}'''
 
 
 def test_strings_formatting_do_not_conflict_with_numbers():
@@ -175,30 +155,26 @@ def test_strings_formatting_do_not_conflict_with_numbers():
 
     test_asset = TestAsset(bar='ham')
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.TestAsset": {
-        "vars": {
-            "foo": 42
+    assert result == {
+        'assets': {
+            "test_inventory.TestAsset": {
+                "vars": {
+                    "foo": 42
+                },
+                "hosts": [
+                    "test_asset"
+                ]
+            },
         },
-        "hosts": [
-            "test_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+        "hosts": {
             "test_asset": {
                 "bar": "ham",
                 "foo": 42
             }
         }
     }
-}'''
 
 
 def test_require_arguments_for_format_strings():
@@ -209,7 +185,7 @@ def test_require_arguments_for_format_strings():
     test_asset = TestAsset()
 
     with pytest.raises(errors.ValueSubstitutionError):
-        ansible_inventory(locals())
+        pyventory_data(locals())
 
 
 def test_inheritance_with_format():
@@ -222,32 +198,28 @@ def test_inheritance_with_format():
 
     child_asset = ChildAsset(bar='ham')
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.ParentAsset": {
-        "children": [
-            "test_inventory.ChildAsset"
-        ]
-    },
-    "test_inventory.ChildAsset": {
-        "hosts": [
-            "child_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+    assert result == {
+        'assets': {
+            "test_inventory.ParentAsset": {
+                "children": [
+                    "test_inventory.ChildAsset"
+                ]
+            },
+            "test_inventory.ChildAsset": {
+                "hosts": [
+                    "child_asset"
+                ]
+            },
+        },
+        "hosts": {
             "child_asset": {
                 "bar": "ham",
                 "foo": "ham"
             }
         }
     }
-}'''
 
 
 def test_deep_multiple_inheritance_propagation():
@@ -267,51 +239,48 @@ def test_deep_multiple_inheritance_propagation():
 
     level3_asset4 = Level3Asset4()
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.Level1Asset1": {
-        "vars": {
-            "foo": "Level1Asset1 foo value"
+    assert result == {
+        'assets': {
+            "test_inventory.Level1Asset1": {
+                "vars": {
+                    "foo": "Level1Asset1 foo value"
+                },
+                "children": [
+                    "test_inventory.Level2Asset3"
+                ]
+            },
+            "test_inventory.Level1Asset2": {
+                "vars": {
+                    "bar": "Level1Asset2 bar value",
+                    "foo": "Level1Asset2 foo value"
+                },
+                "children": [
+                    "test_inventory.Level2Asset3"
+                ]
+            },
+            "test_inventory.Level2Asset3": {
+                "vars": {
+                    "bar": "Level1Asset2 bar value",
+                    "foo": "Level1Asset1 foo value"
+                },
+                "children": [
+                    "test_inventory.Level3Asset4"
+                ]
+            },
+            "test_inventory.Level3Asset4": {
+                "vars": {
+                    "bar": "Level1Asset2 bar value",
+                    "baz": "Level3Asset4 baz value",
+                    "foo": "Level1Asset1 foo value"
+                },
+                "hosts": [
+                    "level3_asset4"
+                ]
+            },
         },
-        "children": [
-            "test_inventory.Level2Asset3"
-        ]
-    },
-    "test_inventory.Level1Asset2": {
-        "vars": {
-            "bar": "Level1Asset2 bar value",
-            "foo": "Level1Asset2 foo value"
-        },
-        "children": [
-            "test_inventory.Level2Asset3"
-        ]
-    },
-    "test_inventory.Level2Asset3": {
-        "vars": {
-            "bar": "Level1Asset2 bar value",
-            "foo": "Level1Asset1 foo value"
-        },
-        "children": [
-            "test_inventory.Level3Asset4"
-        ]
-    },
-    "test_inventory.Level3Asset4": {
-        "vars": {
-            "bar": "Level1Asset2 bar value",
-            "baz": "Level3Asset4 baz value",
-            "foo": "Level1Asset1 foo value"
-        },
-        "hosts": [
-            "level3_asset4"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+        "hosts": {
             "level3_asset4": {
                 "bar": "Level1Asset2 bar value",
                 "baz": "Level3Asset4 baz value",
@@ -319,7 +288,6 @@ def test_deep_multiple_inheritance_propagation():
             }
         }
     }
-}'''
 
 
 def test_skip_non_asset_locals():
@@ -333,24 +301,20 @@ def test_skip_non_asset_locals():
     test_asset = TestAsset()
     test_object = TestObject()
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.TestAsset": {
-        "hosts": [
-            "test_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+    assert result == {
+        'assets': {
+            "test_inventory.TestAsset": {
+                "hosts": [
+                    "test_asset"
+                ]
+            },
+        },
+        "hosts": {
             "test_asset": {}
         }
     }
-}'''
 
 
 def test_multiple_children():
@@ -367,36 +331,32 @@ def test_multiple_children():
     test_asset1 = TestAsset1()
     test_asset2 = TestAsset2()
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.BaseTestAsset": {
-        "children": [
-            "test_inventory.TestAsset1",
-            "test_inventory.TestAsset2"
-        ]
-    },
-    "test_inventory.TestAsset1": {
-        "hosts": [
-            "test_asset1"
-        ]
-    },
-    "test_inventory.TestAsset2": {
-        "hosts": [
-            "test_asset2"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+    assert result == {
+        'assets': {
+            "test_inventory.BaseTestAsset": {
+                "children": [
+                    "test_inventory.TestAsset1",
+                    "test_inventory.TestAsset2"
+                ]
+            },
+            "test_inventory.TestAsset1": {
+                "hosts": [
+                    "test_asset1"
+                ]
+            },
+            "test_inventory.TestAsset2": {
+                "hosts": [
+                    "test_asset2"
+                ]
+            },
+        },
+        "hosts": {
             "test_asset1": {},
             "test_asset2": {}
         }
     }
-}'''
 
 
 def test_allow_notimplemented_value():
@@ -409,34 +369,30 @@ def test_allow_notimplemented_value():
 
     test_asset = TestAsset()
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.BaseTestAsset": {
-        "children": [
-            "test_inventory.TestAsset"
-        ]
-    },
-    "test_inventory.TestAsset": {
-        "vars": {
-            "foo": "bar"
+    assert result == {
+        'assets': {
+            "test_inventory.BaseTestAsset": {
+                "children": [
+                    "test_inventory.TestAsset"
+                ]
+            },
+            "test_inventory.TestAsset": {
+                "vars": {
+                    "foo": "bar"
+                },
+                "hosts": [
+                    "test_asset"
+                ]
+            },
         },
-        "hosts": [
-            "test_asset"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+        "hosts": {
             "test_asset": {
                 "foo": "bar"
             }
         }
     }
-}'''
 
 
 def test_raise_notimplemented_value_in_host():
@@ -450,7 +406,7 @@ def test_raise_notimplemented_value_in_host():
     test_asset = TestAsset()
 
     with pytest.raises(errors.PropertyIsNotImplementedError):
-        ansible_inventory(locals())
+        pyventory_data(locals())
 
 
 def test_string_format_does_not_miss_values():
@@ -469,44 +425,41 @@ def test_string_format_does_not_miss_values():
     test_asset_1 = TestAsset1()
     test_asset_2 = TestAsset2()
 
-    result = six.StringIO()
-    ansible_inventory(locals(), out=result, indent=4)
+    result = pyventory_data(locals())
 
-    # hack for py27 `json.dump()` behavior
-    result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
-
-    assert result == '''{
-    "test_inventory.BaseTestAsset": {
-        "vars": {
-            "baz": "baz-value"
+    assert result == {
+        'assets': {
+            "test_inventory.BaseTestAsset": {
+                "vars": {
+                    "baz": "baz-value"
+                },
+                "children": [
+                    "test_inventory.TestAsset1",
+                    "test_inventory.TestAsset2"
+                ]
+            },
+            "test_inventory.TestAsset1": {
+                "vars": {
+                    "bar": "baz-value",
+                    "baz": "baz-value",
+                    "foo": "baz-value"
+                },
+                "hosts": [
+                    "test_asset_1"
+                ]
+            },
+            "test_inventory.TestAsset2": {
+                "vars": {
+                    "bar": "baz-value",
+                    "baz": "baz-value",
+                    "foo": "baz-value"
+                },
+                "hosts": [
+                    "test_asset_2"
+                ]
+            },
         },
-        "children": [
-            "test_inventory.TestAsset1",
-            "test_inventory.TestAsset2"
-        ]
-    },
-    "test_inventory.TestAsset1": {
-        "vars": {
-            "bar": "baz-value",
-            "baz": "baz-value",
-            "foo": "baz-value"
-        },
-        "hosts": [
-            "test_asset_1"
-        ]
-    },
-    "test_inventory.TestAsset2": {
-        "vars": {
-            "bar": "baz-value",
-            "baz": "baz-value",
-            "foo": "baz-value"
-        },
-        "hosts": [
-            "test_asset_2"
-        ]
-    },
-    "_meta": {
-        "hostvars": {
+        "hosts": {
             "test_asset_1": {
                 "bar": "baz-value",
                 "baz": "baz-value",
@@ -519,7 +472,6 @@ def test_string_format_does_not_miss_values():
             }
         }
     }
-}''', result
 
 
 def test_string_format_detects_infinite_loop():
@@ -531,4 +483,4 @@ def test_string_format_detects_infinite_loop():
     test_asset = TestAsset()
 
     with pytest.raises(errors.ValueSubstitutionInfiniteLoopError):
-        ansible_inventory(locals())
+        pyventory_data(locals())
