@@ -1,4 +1,4 @@
-from pyvars import All
+from inventory import All
 
 
 class BackEnd(All):

@@ -1,5 +1,5 @@
-from pyvars.env_groups import Production
-from pyvars.project_groups import BackEnd, FrontEnd
+from inventory.env import Production
+from inventory.project import BackEnd, FrontEnd
 
 
 class ProdBackEnd(Production, BackEnd):

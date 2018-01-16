@@ -1,5 +1,5 @@
 {
-    "All": {
+    "inventory.base.All": {
         "vars": {
             "minify": false,
             "redis_host": "localhost",
@@ -8,13 +8,13 @@
             "version": "develop"
         },
         "children": [
-            "Staging",
-            "BackEnd",
-            "FrontEnd",
-            "Production"
+            "inventory.env.Staging",
+            "inventory.project.BackEnd",
+            "inventory.project.FrontEnd",
+            "inventory.env.Production"
         ]
     },
-    "Staging": {
+    "inventory.env.Staging": {
         "vars": {
             "minify": false,
             "redis_host": "localhost",
@@ -23,11 +23,11 @@
             "version": "develop"
         },
         "children": [
-            "DevelopHost",
-            "StagingHost"
+            "inventory.stages.DevelopHost",
+            "inventory.stages.StagingHost"
         ]
     },
-    "BackEnd": {
+    "inventory.project.BackEnd": {
         "vars": {
             "minify": false,
             "redis_host": "localhost",
@@ -36,12 +36,12 @@
             "version": "develop"
         },
         "children": [
-            "DevelopHost",
-            "ProdBackEnd",
-            "StagingHost"
+            "inventory.stages.DevelopHost",
+            "inventory.prod.ProdBackEnd",
+            "inventory.stages.StagingHost"
         ]
     },
-    "FrontEnd": {
+    "inventory.project.FrontEnd": {
         "vars": {
             "minify": false,
             "redis_host": "localhost",
@@ -50,12 +50,12 @@
             "version": "develop"
         },
         "children": [
-            "DevelopHost",
-            "ProdFrontEnd",
-            "StagingHost"
+            "inventory.stages.DevelopHost",
+            "inventory.prod.ProdFrontEnd",
+            "inventory.stages.StagingHost"
         ]
     },
-    "DevelopHost": {
+    "inventory.stages.DevelopHost": {
         "vars": {
             "ansible_host": "develop_hostname",
             "minify": false,
@@ -69,7 +69,7 @@
             "develop_sidebranch"
         ]
     },
-    "Production": {
+    "inventory.env.Production": {
         "vars": {
             "minify": true,
             "redis_host": "localhost",
@@ -78,11 +78,11 @@
             "version": "master"
         },
         "children": [
-            "ProdBackEnd",
-            "ProdFrontEnd"
+            "inventory.prod.ProdBackEnd",
+            "inventory.prod.ProdFrontEnd"
         ]
     },
-    "ProdBackEnd": {
+    "inventory.prod.ProdBackEnd": {
         "vars": {
             "minify": true,
             "redis_host": "prod_redis_hostname",
@@ -95,7 +95,7 @@
             "prod_backend2"
         ]
     },
-    "ProdFrontEnd": {
+    "inventory.prod.ProdFrontEnd": {
         "vars": {
             "minify": true,
             "redis_host": "localhost",
@@ -108,7 +108,7 @@
             "prod_frontend2"
         ]
     },
-    "StagingHost": {
+    "inventory.stages.StagingHost": {
         "vars": {
             "ansible_host": "master_hostname",
             "minify": false,

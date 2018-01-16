@@ -2,7 +2,9 @@ import re
 from collections import Mapping, OrderedDict, Sequence
 
 import six
+
 from pyventory import errors
+
 
 __all__ = ['Asset']
 
@@ -23,7 +25,8 @@ class Asset(object):
 
     @classmethod
     def _name(cls):
-        return cls.__name__
+        return '{module}.{name}'.format(
+            module=cls.__module__, name=cls.__name__)
 
     @classmethod
     def __build_vars(cls, obj, strict_format=False):
