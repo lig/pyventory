@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lig/pyventory.svg?branch=master)](https://travis-ci.org/lig/pyventory)
+
 # Pyventory
 Ansible Inventory implementation that uses Python syntax
 
