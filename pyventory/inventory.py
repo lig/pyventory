@@ -10,7 +10,7 @@ __all__ = []
 
 
 @attr.s
-class GroupData(object):
+class AssetData(object):
     vars = attr.ib(default=attr.Factory(OrderedDict))
     children = attr.ib(default=attr.Factory(OrderedSet))
     hosts = attr.ib(default=attr.Factory(OrderedSet))
@@ -19,7 +19,7 @@ class GroupData(object):
 class Inventory(object):
 
     def __init__(self, hosts):
-        self.groups = OrderedDict()
+        self.assets = OrderedDict()
         self.hosts = OrderedDict()
 
         for name, host in sorted(hosts.items()):
@@ -30,11 +30,11 @@ class Inventory(object):
             return
 
         self.hosts[name] = host._vars()
-        self.add_group(host.__class__)
-        self.groups[host._name()].hosts.add(name)
+        self.add_asset(host.__class__)
+        self.assets[host._name()].hosts.add(name)
 
-    def add_group(self, asset):
-        if asset._name() in self.groups:
+    def add_asset(self, asset):
+        if asset._name() in self.assets:
             return
 
         for parent_asset in asset.__bases__:
@@ -45,7 +45,7 @@ class Inventory(object):
             if parent_asset in (Asset, object,):
                 continue
 
-            self.add_group(parent_asset)
-            self.groups[parent_asset._name()].children.add(asset._name())
+            self.add_asset(parent_asset)
+            self.assets[parent_asset._name()].children.add(asset._name())
 
-        self.groups[asset._name()] = GroupData(vars=asset._cls_vars())
+        self.assets[asset._name()] = AssetData(vars=asset._cls_vars())
