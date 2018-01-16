@@ -24,12 +24,12 @@ def test_allow_mixins_for_inventory_items():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "BaseTestAsset": {
+    "test_inventory.BaseTestAsset": {
         "children": [
-            "TestAsset"
+            "test_inventory.TestAsset"
         ]
     },
-    "TestAsset": {
+    "test_inventory.TestAsset": {
         "hosts": [
             "test_asset"
         ]
@@ -56,7 +56,7 @@ def test_allow_host_specific_vars():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "TestAsset": {
+    "test_inventory.TestAsset": {
         "hosts": [
             "test_asset"
         ]
@@ -85,7 +85,7 @@ def test_allow_format_strings_as_values():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "TestAsset": {
+    "test_inventory.TestAsset": {
         "hosts": [
             "test_asset"
         ]
@@ -117,7 +117,7 @@ def test_allow_mapping_of_format_strings_as_values():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "TestAsset": {
+    "test_inventory.TestAsset": {
         "hosts": [
             "test_asset"
         ]
@@ -149,7 +149,7 @@ def test_allow_sequence_of_format_strings_as_values():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "TestAsset": {
+    "test_inventory.TestAsset": {
         "hosts": [
             "test_asset"
         ]
@@ -182,7 +182,7 @@ def test_strings_formatting_do_not_conflict_with_numbers():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "TestAsset": {
+    "test_inventory.TestAsset": {
         "vars": {
             "foo": 42
         },
@@ -229,12 +229,12 @@ def test_inheritance_with_format():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "ParentAsset": {
+    "test_inventory.ParentAsset": {
         "children": [
-            "ChildAsset"
+            "test_inventory.ChildAsset"
         ]
     },
-    "ChildAsset": {
+    "test_inventory.ChildAsset": {
         "hosts": [
             "child_asset"
         ]
@@ -274,33 +274,33 @@ def test_deep_multiple_inheritance_propagation():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "Level1Asset1": {
+    "test_inventory.Level1Asset1": {
         "vars": {
             "foo": "Level1Asset1 foo value"
         },
         "children": [
-            "Level2Asset3"
+            "test_inventory.Level2Asset3"
         ]
     },
-    "Level1Asset2": {
+    "test_inventory.Level1Asset2": {
         "vars": {
             "bar": "Level1Asset2 bar value",
             "foo": "Level1Asset2 foo value"
         },
         "children": [
-            "Level2Asset3"
+            "test_inventory.Level2Asset3"
         ]
     },
-    "Level2Asset3": {
+    "test_inventory.Level2Asset3": {
         "vars": {
             "bar": "Level1Asset2 bar value",
             "foo": "Level1Asset1 foo value"
         },
         "children": [
-            "Level3Asset4"
+            "test_inventory.Level3Asset4"
         ]
     },
-    "Level3Asset4": {
+    "test_inventory.Level3Asset4": {
         "vars": {
             "bar": "Level1Asset2 bar value",
             "baz": "Level3Asset4 baz value",
@@ -340,7 +340,7 @@ def test_skip_non_asset_locals():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "TestAsset": {
+    "test_inventory.TestAsset": {
         "hosts": [
             "test_asset"
         ]
@@ -374,18 +374,18 @@ def test_multiple_children():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "BaseTestAsset": {
+    "test_inventory.BaseTestAsset": {
         "children": [
-            "TestAsset1",
-            "TestAsset2"
+            "test_inventory.TestAsset1",
+            "test_inventory.TestAsset2"
         ]
     },
-    "TestAsset1": {
+    "test_inventory.TestAsset1": {
         "hosts": [
             "test_asset1"
         ]
     },
-    "TestAsset2": {
+    "test_inventory.TestAsset2": {
         "hosts": [
             "test_asset2"
         ]
@@ -416,12 +416,12 @@ def test_allow_notimplemented_value():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "BaseTestAsset": {
+    "test_inventory.BaseTestAsset": {
         "children": [
-            "TestAsset"
+            "test_inventory.TestAsset"
         ]
     },
-    "TestAsset": {
+    "test_inventory.TestAsset": {
         "vars": {
             "foo": "bar"
         },
@@ -476,16 +476,16 @@ def test_string_format_does_not_miss_values():
     result = '\n'.join([x.rstrip() for x in result.getvalue().split('\n')])
 
     assert result == '''{
-    "BaseTestAsset": {
+    "test_inventory.BaseTestAsset": {
         "vars": {
             "baz": "baz-value"
         },
         "children": [
-            "TestAsset1",
-            "TestAsset2"
+            "test_inventory.TestAsset1",
+            "test_inventory.TestAsset2"
         ]
     },
-    "TestAsset1": {
+    "test_inventory.TestAsset1": {
         "vars": {
             "bar": "baz-value",
             "baz": "baz-value",
@@ -495,7 +495,7 @@ def test_string_format_does_not_miss_values():
             "test_asset_1"
         ]
     },
-    "TestAsset2": {
+    "test_inventory.TestAsset2": {
         "vars": {
             "bar": "baz-value",
             "baz": "baz-value",

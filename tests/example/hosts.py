@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from pyventory import ansible_inventory
 
-from pyvars import *
+from inventory import *
 
 
 develop = DevelopHost()

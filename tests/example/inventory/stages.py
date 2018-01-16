@@ -1,5 +1,5 @@
-from pyvars.env_groups import Staging
-from pyvars.project_groups import BackEnd, FrontEnd
+from inventory.env import Staging
+from inventory.project import BackEnd, FrontEnd
 
 
 class DevelopHost(Staging, BackEnd, FrontEnd):
