@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-from pyventory import ansible_inventory
-
 from inventory import *
 
 
@@ -15,5 +12,3 @@ prod_backend1 = ProdBackEnd(num=1)
 prod_backend2 = ProdBackEnd(num=2)
 prod_frontend1 = ProdFrontEnd(num=1)
 prod_frontend2 = ProdFrontEnd(num=2)
-
-ansible_inventory(locals(), indent=4)
