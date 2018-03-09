@@ -58,6 +58,9 @@
     "inventory.stages.DevelopHost": {
         "vars": {
             "ansible_host": "develop_hostname",
+            "extra": {
+                "debug": 1
+            },
             "minify": false,
             "redis_host": "localhost",
             "run_tests": true,
@@ -111,6 +114,10 @@
     "inventory.stages.StagingHost": {
         "vars": {
             "ansible_host": "master_hostname",
+            "extra_branches": [
+                "foo",
+                "bar"
+            ],
             "minify": false,
             "redis_host": "localhost",
             "run_tests": true,
@@ -125,6 +132,9 @@
         "hostvars": {
             "develop": {
                 "ansible_host": "develop_hostname",
+                "extra": {
+                    "debug": 1
+                },
                 "minify": false,
                 "redis_host": "localhost",
                 "run_tests": true,
@@ -133,6 +143,9 @@
             },
             "develop_sidebranch": {
                 "ansible_host": "sidebranch_hostname",
+                "extra": {
+                    "debug": 1
+                },
                 "minify": false,
                 "redis_host": "localhost",
                 "run_tests": true,
@@ -177,6 +190,10 @@
             },
             "staging": {
                 "ansible_host": "master_hostname",
+                "extra_branches": [
+                    "foo",
+                    "bar"
+                ],
                 "minify": false,
                 "redis_host": "localhost",
                 "run_tests": true,
