@@ -483,3 +483,21 @@ def test_string_format_detects_infinite_loop():
 
     with pytest.raises(errors.ValueSubstitutionInfiniteLoopError):
         pyventory_data(locals())
+
+
+def test_use_calculated_asset_class_atribute_value():
+
+    class TestAsset(Asset):
+        foo = '{bar}'
+        bar = 'bar'
+
+    assert TestAsset.foo == 'bar'
+
+
+def test_do_not_use_strict_calculation_for_asset_class_atribute_value():
+
+    class TestAsset(Asset):
+        foo = '{bar}-{baz}'
+        bar = 'bar'
+
+    assert TestAsset.foo == 'bar-{baz}'
