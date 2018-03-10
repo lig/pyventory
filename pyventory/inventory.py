@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from ordered_set import OrderedSet
 import attr
 
@@ -10,17 +8,17 @@ __all__ = []
 
 
 @attr.s
-class AssetData(object):
-    vars = attr.ib(default=attr.Factory(OrderedDict))
+class AssetData:
+    vars = attr.ib(default=attr.Factory(dict))
     children = attr.ib(default=attr.Factory(OrderedSet))
     hosts = attr.ib(default=attr.Factory(OrderedSet))
 
 
-class Inventory(object):
+class Inventory:
 
     def __init__(self, hosts):
-        self.assets = OrderedDict()
-        self.hosts = OrderedDict()
+        self.assets = {}
+        self.hosts = {}
 
         for name, host in sorted(hosts.items()):
             self.add_host(name, host)
@@ -41,8 +39,8 @@ class Inventory(object):
             # skip mixins
             if not issubclass(parent_asset, Asset):
                 continue
-            # skip Asset itself and object
-            if parent_asset in (Asset, object,):
+            # skip Asset itself
+            if parent_asset is Asset:
                 continue
 
             self.add_asset(parent_asset)

@@ -2,7 +2,9 @@ from pyventory.errors import PyventoryError
 
 
 def test_pyventory_exception_format():
-    e = PyventoryError('This is {} format string {}', 'test', 'example')
+    test = 'test'
+    example = 'example'
+    e = PyventoryError(f'This is {test} format string {example}')
     assert str(e) == 'This is test format string example'
 
 
