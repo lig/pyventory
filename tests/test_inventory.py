@@ -1,5 +1,4 @@
 import pytest
-import six
 
 from pyventory import Asset, errors, pyventory_data
 
@@ -9,7 +8,7 @@ def test_allow_mixins_for_inventory_items():
     class BaseTestAsset(Asset):
         pass
 
-    class TestMixin(object):
+    class TestMixin:
         pass
 
     class TestAsset(TestMixin, BaseTestAsset):
@@ -295,7 +294,7 @@ def test_skip_non_asset_locals():
     class TestAsset(Asset):
         pass
 
-    class TestObject(object):
+    class TestObject:
         pass
 
     test_asset = TestAsset()
@@ -395,7 +394,7 @@ def test_allow_notimplemented_value():
     }
 
 
-def test_raise_notimplemented_value_in_host():
+def test_raise_notimplemented_value_in_final_asset():
 
     class BaseTestAsset(Asset):
         foo = NotImplemented

@@ -1,7 +1,7 @@
 import json
 import pathlib
 import sys
-from collections import Mapping, OrderedDict, Sequence
+from collections import Mapping, Sequence
 
 import attr
 
@@ -17,9 +17,9 @@ def pyventory_data(hosts):
     """
     inventory = Inventory(hosts)
 
-    assets = OrderedDict(
-        (name, attr.asdict(asset, dict_factory=OrderedDict))
-        for name, asset in inventory.assets.items())
+    assets = {
+        name: attr.asdict(asset)
+        for name, asset in inventory.assets.items()}
 
     for asset in assets.values():
         for attr_name in ('hosts', 'vars', 'children',):
@@ -36,7 +36,7 @@ def ansible_inventory(hosts, out=sys.stdout, indent=None):
     """
     raw_data = pyventory_data(hosts)
 
-    data = OrderedDict(raw_data['assets'])
+    data = raw_data['assets']
     data['_meta'] = {'hostvars': raw_data['hosts']}
 
     json.dump(data, out, indent=indent, default=list)
@@ -46,8 +46,7 @@ def terraform_vars(hosts, filename_base='pyventory', indent=None):
     """Dumps inventory in the Terraform's JSON format to `<filename_base>.tf`
     setting their values as defaults.
     """
-    path_base = pathlib.Path(filename_base)
-    tf_config_path = str(path_base.with_suffix('.tf'))
+    tf_config_path = pathlib.Path(filename_base).with_suffix('.tf')
 
     raw_data = pyventory_data(hosts)
 
@@ -57,8 +56,7 @@ def terraform_vars(hosts, filename_base='pyventory', indent=None):
 
         for name, value in asset_data.items():
 
-            var_name = '{asset_name}__{name}'.format(
-                asset_name=asset_name, name=name)
+            var_name = f'{asset_name}__{name}'
 
             var_type = 'string'
             var_value = value

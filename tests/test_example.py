@@ -13,23 +13,26 @@ def example_dir(tests_dir):
 
 @pytest.fixture(scope='session')
 def anisble_inventory(example_dir):
-    return open(str(example_dir / 'ansible.json'), 'r')
+    return open(example_dir / 'ansible.json', 'r')
 
 
 @pytest.fixture(scope='session')
 def terraform_config(example_dir):
-    return open(str(example_dir / 'terraform.tf'), 'r')
+    return open(example_dir / 'terraform.tf', 'r')
 
 
 def test_ansible_inventory(tests_dir, example_dir, anisble_inventory):
     project_dir = tests_dir.parent
     inventory_exe = example_dir / 'ansible_hosts.py'
 
-    result = subprocess.check_output(
+    result = subprocess.run(
         shlex.split(str(inventory_exe)),
+        stdout=subprocess.PIPE,
+        check=True,
         env=dict(
             os.environ,
-            PYTHONPATH='{}:{}'.format(project_dir, example_dir)))
+            PYTHONPATH='{}:{}'.format(project_dir, example_dir))
+    ).stdout
 
     assert json.loads(result.decode()) == json.load(anisble_inventory)
 
@@ -38,14 +41,15 @@ def test_terraform_vars(tests_dir, example_dir, terraform_config):
     project_dir = tests_dir.parent
     inventory_exe = example_dir / 'terraform_vars.py'
 
-    subprocess.check_call(
+    subprocess.run(
         shlex.split(str(inventory_exe)),
+        check=True,
         env=dict(
             os.environ,
             PYTHONPATH='{}:{}'.format(project_dir, example_dir)))
 
     result_path = example_dir / 'terraform_result.tf'
-    result = open(str(result_path), 'r')
+    result = open(result_path, 'r')
 
     assert json.load(result) == json.load(terraform_config)
 
