@@ -11,48 +11,54 @@ from pyventory.inventory import Inventory
 __all__ = ['pyventory_data', 'ansible_inventory', 'terraform_vars']
 
 
-def pyventory_data(hosts):
+def pyventory_data(instances):
     """Provides raw inventory data as Python `dict` containing Asset data in
-    `assets` key and hosts data in `hosts` key.
+    `assets` key and instances data in `instances` key.
     """
-    inventory = Inventory(hosts)
+    inventory = Inventory(instances)
 
     assets = {
         name: attr.asdict(asset)
         for name, asset in inventory.assets.items()}
 
     for asset in assets.values():
-        for attr_name in ('hosts', 'vars', 'children',):
+        for attr_name in ('instances', 'vars', 'children',):
             if not asset[attr_name]:
                 del asset[attr_name]
 
-    hosts = inventory.hosts.copy()
+    instances = inventory.instances.copy()
 
-    return {'assets': assets, 'hosts': hosts}
+    return {'assets': assets, 'instances': instances}
 
 
-def ansible_inventory(hosts, out=sys.stdout, indent=None):
+def ansible_inventory(instances, out=sys.stdout, indent=None):
     """Dumps inventory in the Ansible's Dynamic Inventory JSON format to `out`.
     """
-    raw_data = pyventory_data(hosts)
+    raw_data = pyventory_data(instances)
 
-    data = raw_data['assets']
-    data['_meta'] = {'hostvars': raw_data['hosts']}
+    data = {}
+
+    for key, value in raw_data['assets'].items():
+        if 'instances' in value:
+            value['hosts'] = value.pop('instances')
+        data[key] = value
+
+    data['_meta'] = {'hostvars': raw_data['instances']}
 
     json.dump(data, out, indent=indent, default=list)
 
 
-def terraform_vars(hosts, filename_base='pyventory', indent=None):
+def terraform_vars(instances, filename_base='pyventory', indent=None):
     """Dumps inventory in the Terraform's JSON format to `<filename_base>.tf`
     setting their values as defaults.
     """
     tf_config_path = pathlib.Path(filename_base).with_suffix('.tf')
 
-    raw_data = pyventory_data(hosts)
+    raw_data = pyventory_data(instances)
 
     tf_config = {}
 
-    for asset_name, asset_data in raw_data['hosts'].items():
+    for asset_name, asset_data in raw_data['instances'].items():
 
         for name, value in asset_data.items():
 
