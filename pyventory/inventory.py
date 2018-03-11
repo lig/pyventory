@@ -11,25 +11,25 @@ __all__ = []
 class AssetData:
     vars = attr.ib(default=attr.Factory(dict))
     children = attr.ib(default=attr.Factory(OrderedSet))
-    hosts = attr.ib(default=attr.Factory(OrderedSet))
+    instances = attr.ib(default=attr.Factory(OrderedSet))
 
 
 class Inventory:
 
-    def __init__(self, hosts):
+    def __init__(self, instances):
         self.assets = {}
-        self.hosts = {}
+        self.instances = {}
 
-        for name, host in sorted(hosts.items()):
-            self.add_host(name, host)
+        for name, instance in sorted(instances.items()):
+            self.add_instance(name, instance)
 
-    def add_host(self, name, host):
-        if not isinstance(host, Asset):
+    def add_instance(self, name, instance):
+        if not isinstance(instance, Asset):
             return
 
-        self.hosts[name] = host._vars(host, strict=True)
-        self.add_asset(host.__class__)
-        self.assets[host._name].hosts.add(name)
+        self.instances[name] = instance._vars(instance, strict=True)
+        self.add_asset(instance.__class__)
+        self.assets[instance._name].instances.add(name)
 
     def add_asset(self, asset):
         if asset._name in self.assets:

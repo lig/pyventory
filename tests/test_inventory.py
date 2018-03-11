@@ -26,12 +26,12 @@ def test_allow_mixins_for_inventory_items():
                 ],
             },
             "test_inventory.TestAsset": {
-                "hosts": [
+                "instances": [
                     "test_asset",
                 ],
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset": {}
         },
     }
@@ -49,12 +49,12 @@ def test_allow_host_specific_vars():
     assert result == {
         'assets': {
             "test_inventory.TestAsset": {
-                "hosts": [
+                "instances": [
                     "test_asset",
                 ],
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset": {
                 "foo": "bar"
             },
@@ -74,12 +74,12 @@ def test_allow_format_strings_as_values():
     assert result == {
         'assets': {
             "test_inventory.TestAsset": {
-                "hosts": [
+                "instances": [
                     "test_asset"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset": {
                 "bar": "ham",
                 "foo": "test_ham"
@@ -102,12 +102,12 @@ def test_allow_mapping_of_format_strings_as_values():
     assert result == {
         'assets': {
             "test_inventory.TestAsset": {
-                "hosts": [
+                "instances": [
                     "test_asset"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset": {
                 "bar": "ham",
                 "foo": {
@@ -130,12 +130,12 @@ def test_allow_sequence_of_format_strings_as_values():
     assert result == {
         'assets': {
             "test_inventory.TestAsset": {
-                "hosts": [
+                "instances": [
                     "test_asset"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset": {
                 "bar": "ham",
                 "foo": [
@@ -162,12 +162,12 @@ def test_strings_formatting_do_not_conflict_with_numbers():
                 "vars": {
                     "foo": 42
                 },
-                "hosts": [
+                "instances": [
                     "test_asset"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset": {
                 "bar": "ham",
                 "foo": 42
@@ -205,12 +205,12 @@ def test_inheritance_with_format():
                 ]
             },
             "test_inventory.ChildAsset": {
-                "hosts": [
+                "instances": [
                     "child_asset"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "child_asset": {
                 "bar": "ham",
                 "foo": "ham"
@@ -272,12 +272,12 @@ def test_deep_multiple_inheritance_propagation():
                     "baz": "Level3Asset4 baz value",
                     "foo": "Level1Asset1 foo value"
                 },
-                "hosts": [
+                "instances": [
                     "level3_asset4"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "level3_asset4": {
                 "bar": "Level1Asset2 bar value",
                 "baz": "Level3Asset4 baz value",
@@ -303,12 +303,12 @@ def test_skip_non_asset_locals():
     assert result == {
         'assets': {
             "test_inventory.TestAsset": {
-                "hosts": [
+                "instances": [
                     "test_asset"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset": {}
         }
     }
@@ -339,17 +339,17 @@ def test_multiple_children():
                 ]
             },
             "test_inventory.TestAsset1": {
-                "hosts": [
+                "instances": [
                     "test_asset1"
                 ]
             },
             "test_inventory.TestAsset2": {
-                "hosts": [
+                "instances": [
                     "test_asset2"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset1": {},
             "test_asset2": {}
         }
@@ -379,12 +379,12 @@ def test_allow_notimplemented_value():
                 "vars": {
                     "foo": "bar"
                 },
-                "hosts": [
+                "instances": [
                     "test_asset"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset": {
                 "foo": "bar"
             }
@@ -439,7 +439,7 @@ def test_string_format_does_not_miss_values():
                     "baz": "baz-value",
                     "foo": "baz-value"
                 },
-                "hosts": [
+                "instances": [
                     "test_asset_1"
                 ]
             },
@@ -449,12 +449,12 @@ def test_string_format_does_not_miss_values():
                     "baz": "baz-value",
                     "foo": "baz-value"
                 },
-                "hosts": [
+                "instances": [
                     "test_asset_2"
                 ]
             },
         },
-        "hosts": {
+        "instances": {
             "test_asset_1": {
                 "bar": "baz-value",
                 "baz": "baz-value",
