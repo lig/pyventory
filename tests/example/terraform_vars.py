@@ -7,6 +7,6 @@ from pyventory import terraform_vars
 
 
 terraform_vars(
-    vars(assets),
+    instances=vars(assets),
     filename_base=pathlib.Path(__file__).parent / 'terraform_result',
     indent=4)

@@ -31,10 +31,10 @@ def pyventory_data(instances):
     return {'assets': assets, 'instances': instances}
 
 
-def ansible_inventory(instances, out=sys.stdout, indent=None):
+def ansible_inventory(hosts, out=sys.stdout, indent=None):
     """Dumps inventory in the Ansible's Dynamic Inventory JSON format to `out`.
     """
-    raw_data = pyventory_data(instances)
+    raw_data = pyventory_data(hosts)
 
     data = {}
 
