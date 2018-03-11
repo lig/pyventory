@@ -1,5 +1,5 @@
-from ordered_set import OrderedSet
 import attr
+from ordered_set import OrderedSet
 
 from pyventory.asset import Asset
 
@@ -27,12 +27,12 @@ class Inventory:
         if not isinstance(host, Asset):
             return
 
-        self.hosts[name] = host._vars()
+        self.hosts[name] = host._vars(host, strict=True)
         self.add_asset(host.__class__)
-        self.assets[host._name()].hosts.add(name)
+        self.assets[host._name].hosts.add(name)
 
     def add_asset(self, asset):
-        if asset._name() in self.assets:
+        if asset._name in self.assets:
             return
 
         for parent_asset in asset.__bases__:
@@ -44,6 +44,6 @@ class Inventory:
                 continue
 
             self.add_asset(parent_asset)
-            self.assets[parent_asset._name()].children.add(asset._name())
+            self.assets[parent_asset._name].children.add(asset._name)
 
-        self.assets[asset._name()] = AssetData(vars=asset._cls_vars())
+        self.assets[asset._name] = AssetData(vars=asset._vars(asset))

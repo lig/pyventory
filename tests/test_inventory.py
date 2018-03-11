@@ -181,10 +181,8 @@ def test_require_arguments_for_format_strings():
     class TestAsset(Asset):
         foo = '{bar}'
 
-    test_asset = TestAsset()
-
     with pytest.raises(errors.ValueSubstitutionError):
-        pyventory_data(locals())
+        test_asset = TestAsset()
 
 
 def test_inheritance_with_format():
@@ -402,10 +400,8 @@ def test_raise_notimplemented_value_in_final_asset():
     class TestAsset(BaseTestAsset):
         pass
 
-    test_asset = TestAsset()
-
     with pytest.raises(errors.PropertyIsNotImplementedError):
-        pyventory_data(locals())
+        test_asset = TestAsset()
 
 
 def test_string_format_does_not_miss_values():
@@ -479,25 +475,5 @@ def test_string_format_detects_infinite_loop():
         bar = '{foo}'
         foo = '{bar}'
 
-    test_asset = TestAsset()
-
     with pytest.raises(errors.ValueSubstitutionInfiniteLoopError):
-        pyventory_data(locals())
-
-
-def test_use_calculated_asset_class_atribute_value():
-
-    class TestAsset(Asset):
-        foo = '{bar}'
-        bar = 'bar'
-
-    assert TestAsset.foo == 'bar'
-
-
-def test_do_not_use_strict_calculation_for_asset_class_atribute_value():
-
-    class TestAsset(Asset):
-        foo = '{bar}-{baz}'
-        bar = 'bar'
-
-    assert TestAsset.foo == 'bar-{baz}'
+        test_asset = TestAsset()
