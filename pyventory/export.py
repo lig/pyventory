@@ -52,7 +52,7 @@ def terraform_vars(instances, filename_base='pyventory', indent=None):
     """Dumps inventory in the Terraform's JSON format to `<filename_base>.tf`
     setting their values as defaults.
     """
-    tf_config_path = pathlib.Path(filename_base).with_suffix('.tf')
+    tf_config_path = pathlib.Path(filename_base).with_suffix('.tf.json')
 
     raw_data = pyventory_data(instances)
 

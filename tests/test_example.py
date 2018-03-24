@@ -18,7 +18,7 @@ def anisble_inventory(example_dir):
 
 @pytest.fixture(scope='session')
 def terraform_config(example_dir):
-    return open(example_dir / 'terraform.tf', 'r')
+    return open(example_dir / 'terraform.tf.json', 'r')
 
 
 def test_ansible_inventory(tests_dir, example_dir, anisble_inventory):
@@ -48,7 +48,7 @@ def test_terraform_vars(tests_dir, example_dir, terraform_config):
             os.environ,
             PYTHONPATH='{}:{}'.format(project_dir, example_dir)))
 
-    result_path = example_dir / 'terraform_result.tf'
+    result_path = example_dir / 'terraform_result.tf.json'
     result = open(result_path, 'r')
 
     assert json.load(result) == json.load(terraform_config)
