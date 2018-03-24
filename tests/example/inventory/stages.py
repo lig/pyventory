@@ -14,3 +14,13 @@ class StagingHost(Staging, BackEnd, FrontEnd):
     ansible_host = 'master_hostname'
     version = 'master'
     extra_branches = ['foo', 'bar']
+    extra_objs = [
+        {
+            'prop1': 'value1',
+            'prop2': 'value2',
+        },
+        {
+            'prop3': 'value3',
+            'prop4': 'value4',
+        },
+    ]

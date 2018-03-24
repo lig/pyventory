@@ -76,7 +76,10 @@ def terraform_vars(instances, filename_base='pyventory', indent=None):
             elif isinstance(value, Mapping):
                 var_type = 'map'
             elif isinstance(value, Sequence):
-                var_type = 'list'
+                if value and isinstance(value[0], Mapping):
+                    var_type = 'map'
+                else:
+                    var_type = 'list'
 
             tf_config[var_name] = {
                 'type': var_type,
