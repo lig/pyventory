@@ -1,28 +1,28 @@
 import json
 import pathlib
 import sys
-from collections import Mapping, Sequence
+import typing
+from collections import abc
 
 import attr
 
-from pyventory.inventory import Inventory
+from . import base
 
 
-__all__ = ['pyventory_data', 'ansible_inventory', 'terraform_vars']
-
-
-def pyventory_data(instances):
+def pyventory_data(instances: typing.Mapping[str, base.MaybeAsset_T]) -> typing.Mapping:
     """Provides raw inventory data as Python `dict` containing Asset data in
     `assets` key and instances data in `instances` key.
     """
-    inventory = Inventory(instances)
+    inventory = base.Inventory(instances)
 
-    assets = {
-        name: attr.asdict(asset)
-        for name, asset in inventory.assets.items()}
+    assets = {name: attr.asdict(asset) for name, asset in inventory.assets.items()}
 
     for asset in assets.values():
-        for attr_name in ('instances', 'vars', 'children',):
+        for attr_name in (
+            'instances',
+            'vars',
+            'children',
+        ):
             if not asset[attr_name]:
                 del asset[attr_name]
 
@@ -31,9 +31,12 @@ def pyventory_data(instances):
     return {'assets': assets, 'instances': instances}
 
 
-def ansible_inventory(hosts, out=sys.stdout, indent=None):
-    """Dumps inventory in the Ansible's Dynamic Inventory JSON format to `out`.
-    """
+def ansible_inventory(
+    hosts: typing.Mapping[str, base.MaybeAsset_T],
+    out: typing.TextIO = sys.stdout,
+    indent: typing.Optional[int] = None,
+) -> None:
+    """Dumps inventory in the Ansible's Dynamic Inventory JSON format to `out`."""
     raw_data = pyventory_data(hosts)
 
     data = {}
@@ -48,7 +51,11 @@ def ansible_inventory(hosts, out=sys.stdout, indent=None):
     json.dump(data, out, indent=indent, default=list)
 
 
-def terraform_vars(instances, filename_base='pyventory', indent=None):
+def terraform_vars(
+    instances: typing.Mapping[str, base.MaybeAsset_T],
+    filename_base: str = 'pyventory',
+    indent: typing.Optional[int] = None,
+) -> None:
     """Dumps inventory in the Terraform's JSON format to `<filename_base>.tf`
     setting their values as defaults.
     """
@@ -71,12 +78,18 @@ def terraform_vars(instances, filename_base='pyventory', indent=None):
                 pass
             elif isinstance(value, bool):
                 var_value = str(value).lower()
-            elif isinstance(value, (int, float,)):
+            elif isinstance(
+                value,
+                (
+                    int,
+                    float,
+                ),
+            ):
                 var_value = str(value)
-            elif isinstance(value, Mapping):
+            elif isinstance(value, abc.Mapping):
                 var_type = 'map'
-            elif isinstance(value, Sequence):
-                if value and isinstance(value[0], Mapping):
+            elif isinstance(value, abc.Iterable):
+                if value and isinstance(next(iter(value)), abc.Mapping):
                     var_type = 'map'
                 else:
                     var_type = 'list'

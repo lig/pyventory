@@ -1,0 +1,42 @@
+[build-system]
+requires = ["poetry-core>=1.0.0a5"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "pyventory"
+version = "3.1.2"
+description = "Ansible Inventory implementation that uses Python syntax"
+authors = ["Serge Matveenko <lig@countzero.co>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/lig/pyventory"
+repository = "https://github.com/lig/pyventory.git"
+documentation = "https://readthedocs.org/projects/pyventory/"
+keywords = ["devops", "ansible", "inventory", "terraform", "vars"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Topic :: System :: Systems Administration",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+attrs = "^20.2.0"
+ordered-set = "^4.0.2"
+
+[tool.poetry.dev-dependencies]
+black = { version = "*", allow-prereleases = true }
+pytest = "^6.0.2"
+pytest-black = "^0.3.11"
+pytest-flake8 = "^1.0.6"
+pytest-isort = "^1.2.0"
+pytest-mypy = "^0.7.0"
+
+[tool.black]
+skip-string-normalization = true
+target-version = ["py36"]
+
+[tool.isort]
+profile = "black"
+lines_after_imports = 2
