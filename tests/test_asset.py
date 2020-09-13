@@ -4,7 +4,6 @@ from pyventory import Asset, errors
 
 
 def test_calculate_asset_class_atribute_value_on_call():
-
     class TestAsset(Asset):
         foo = '{bar}'
         bar = 'bar'
@@ -13,7 +12,6 @@ def test_calculate_asset_class_atribute_value_on_call():
 
 
 def test_use_raw_asset_class_atribute_value():
-
     class TestAsset(Asset):
         foo = '{bar}-{baz}'
         bar = 'bar'
@@ -22,7 +20,6 @@ def test_use_raw_asset_class_atribute_value():
 
 
 def test_asset_class_atribute_value_calculation_is_strict():
-
     class TestAsset(Asset):
         foo = '{bar}-{baz}'
         bar = 'bar'

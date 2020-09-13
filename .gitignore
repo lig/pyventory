@@ -1,11 +1,11 @@
 .*
 !.gitignore
 *~
+
+# dot files
+!/.pre-commit-config.yaml
+
+# python
 *.pyc
-
-/venv
-/build
-/dist
 /*.egg-info
-
-!/.travis.yml
+/dist

@@ -3,8 +3,8 @@ from inventory import *
 
 develop = DevelopHost()
 develop_sidebranch = DevelopHost(
-    ansible_host='sidebranch_hostname',
-    version='sidebranch_name')
+    ansible_host='sidebranch_hostname', version='sidebranch_name'
+)
 
 staging = StagingHost()
 
