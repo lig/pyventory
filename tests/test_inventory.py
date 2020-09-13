@@ -343,3 +343,36 @@ def test_string_format_detects_infinite_loop():
 
     with pytest.raises(errors.ValueSubstitutionInfiniteLoopError):
         TestAsset()
+
+
+def test_lists_of_instances():
+    class BaseTestAsset(Asset):
+        pass
+
+    class TestAsset1(BaseTestAsset):
+        foo = NotImplemented
+
+    class TestAsset2(BaseTestAsset):
+        bar = NotImplemented
+
+    test_assets1 = [TestAsset1(foo=x) for x in range(2)]
+    test_assets2 = [TestAsset2(bar=y) for y in range(2, 3)]
+
+    result = pyventory_data(locals())
+
+    assert result == {
+        "assets": {
+            "test_inventory.BaseTestAsset": {
+                "children": ["test_inventory.TestAsset1", "test_inventory.TestAsset2"]
+            },
+            "test_inventory.TestAsset1": {
+                "instances": ["test_assets1_1", "test_assets1_2"]
+            },
+            "test_inventory.TestAsset2": {"instances": ["test_assets2_1"]},
+        },
+        "instances": {
+            "test_assets1_1": {"foo": 0},
+            "test_assets1_2": {"foo": 1},
+            "test_assets2_1": {"bar": 2},
+        },
+    }
