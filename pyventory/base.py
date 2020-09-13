@@ -1,4 +1,5 @@
 import typing
+from collections import abc
 
 import attr
 from ordered_set import OrderedSet
@@ -29,6 +30,11 @@ class Inventory:
             self.add_instance(name, instance)
 
     def add_instance(self, name: str, instance: MaybeAsset_T) -> None:
+        if isinstance(instance, abc.Iterable) and not isinstance(instance, str):
+            for n, item in enumerate(instance, start=1):
+                self.add_instance(name=f'{name}_{n}', instance=item)
+            return
+
         if not isinstance(instance, assets.Asset):
             return
 
