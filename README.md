@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lig/pyventory.svg?branch=master)](https://travis-ci.org/lig/pyventory)
+![CI Status](https://github.com/lig/pyventory/workflows/CI/badge.svg)
 
 # Pyventory
 
