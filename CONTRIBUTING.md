@@ -16,3 +16,5 @@
 ## Change the Docs
 
 ## Get Support
+
+Whilst it's possible to use GitHub issues to ask a question the best way to get the support for Pyventory is to use the [`pyventory` tag on Stack Overflow](https://stackoverflow.com/questions/tagged/pyventory).
