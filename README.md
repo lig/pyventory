@@ -1,4 +1,4 @@
-![CI Status](https://github.com/lig/pyventory/workflows/CI/badge.svg)
+[![CI Status](https://github.com/lig/pyventory/workflows/CI/badge.svg)](https://github.com/lig/pyventory/actions)
 
 # Pyventory
 
