@@ -6,14 +6,29 @@ inventory. It brings the power of OOP into play to defend from some common error
 undefined variables and to help keep the inventory in line with the DRY principle.
 
 
+Installation
+============
 
-User Guide
-==========
+It is usually enough to install `Pyventory` into the same Python environment as you have
+Ansible installed into. The command below should make it happen in most cases.
+
+.. code-block:: shell
+
+   pip3 install pyventory
+
+
+If the above doesn't work for you, read :doc:`/guide/installation`.
+
+
+Contents
+========
 
 .. toctree::
-   :glob:
+   :maxdepth: 2
 
-   guide/*
+   tutorial/index
+   guide/index
+   how-tos/index
 
 
 Contributing

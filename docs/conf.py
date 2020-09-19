@@ -50,5 +50,21 @@ html_theme = 'alabaster'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+
 # https://github.com/readthedocs/readthedocs.org/issues/2569
 master_doc = 'index'
+
+
+# Alabaster theme options
+
+html_theme_options = {
+    'description': "A New Feel for Ansible Inventory",
+    'fixed_sidebar': True,
+    'show_relbar_bottom': True,
+    'github_banner': True,
+    'github_button': True,
+    'github_user': "lig",
+    'github_repo': "pyventory",
+    'github_type': 'star',
+    'github_count': 'true',
+}
