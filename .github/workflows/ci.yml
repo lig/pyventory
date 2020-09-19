@@ -19,7 +19,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install poetry
-      run: pip install 'poetry==1.1.0b2' wheel
+      run: pip install 'poetry==1.1.0b3' wheel
     - name: Install deps
       run: poetry install
     - name: Code health
