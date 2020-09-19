@@ -32,6 +32,10 @@ pytest-black = "^0.3.11"
 pytest-flake8 = "^1.0.6"
 pytest-isort = "^1.2.0"
 pytest-mypy = "^0.7.0"
+rstcheck = "^3.3.1"
+Sphinx = "^3.2.1"
+ansible = "^2.9.13"
+pyyaml = "^5.3.1"
 
 [tool.black]
 skip-string-normalization = true

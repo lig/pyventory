@@ -13,6 +13,7 @@ repos:
         types: [python]
         exclude: >
           (?x)^(
+            docs/ |
             tests/
           )
       - id: black
@@ -29,3 +30,8 @@ repos:
           (?x)^(
             tests/example/
           )
+      - id: rstcheck
+        name: rstcheck
+        entry: poetry run rstcheck
+        language: system
+        types: [rst]
