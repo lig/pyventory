@@ -1,4 +1,5 @@
 import re
+import types
 import typing
 from collections import abc
 
@@ -9,9 +10,9 @@ __all__ = ['Asset']
 
 
 AssetObj_T = typing.Union['Asset', typing.Type['Asset']]
-AssetContext_T = typing.Dict[str, typing.Union['AttrValueDef_T']]
-AttrValueDef_T = typing.Union['NotImplemented', 'AttrValueFinal_T']
 AttrValueFinal_T = typing.Union[str, int, float, typing.Iterable, typing.Mapping]
+AttrValueDef_T = typing.Union[types.NotImplementedType, AttrValueFinal_T]
+AssetContext_T = typing.Dict[str, AttrValueDef_T]
 
 
 class SKIP_ATTR:
@@ -73,7 +74,7 @@ class AssetMeta(type):
 class Asset(metaclass=AssetMeta):
     _name: typing.ClassVar[str]
 
-    _string_format_regex = re.compile(r'{([\w_]+)}')
+    _string_format_regex = re.compile(r'(?<!{){([\w_]+)}(?!<})')
 
     def __new__(cls, **kwargs: AttrValueFinal_T) -> 'Asset':
         self = super().__new__(cls)
