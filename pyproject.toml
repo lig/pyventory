@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pyventory"
-version = "3.2.0"
+version = "3.3.0"
 description = "Ansible Inventory implementation that uses Python syntax"
 authors = ["Serge Matveenko <lig@countzero.co>"]
 license = "MIT"
