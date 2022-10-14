@@ -38,10 +38,7 @@ class Inventory:
         if not isinstance(instance, assets.Asset):
             return
 
-        try:
-            self.instances[name] = instance._context(instance)
-        except Exception:
-            raise Exception(instance, type(instance))
+        self.instances[name] = instance._context(instance)
         self.add_asset(instance.__class__)
         self.assets[instance._name].instances.add(name)
 
