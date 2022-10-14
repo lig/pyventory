@@ -376,3 +376,26 @@ def test_lists_of_instances():
             "test_assets2_1": {"bar": 2},
         },
     }
+
+
+def test_escaped_braces():
+    class TestAsset(Asset):
+        foo = '{{bar}}'
+
+    test_asset1 = TestAsset()
+    test_asset2 = TestAsset(foo='{{ham}}')
+
+    result = pyventory_data(locals())
+
+    assert result == {
+        "assets": {
+            "test_inventory.TestAsset": {
+                'vars': {"foo": "{bar}"},
+                'instances': ["test_asset1", "test_asset2"],
+            },
+        },
+        "instances": {
+            "test_asset1": {"foo": "{bar}"},
+            "test_asset2": {"foo": "{ham}"},
+        },
+    }

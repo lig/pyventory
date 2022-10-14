@@ -11,7 +11,7 @@ def test_calculate_asset_class_attribute_value_on_call():
     assert TestAsset.foo() == 'bar'
 
 
-def test_escaped_braces_do_not_act_as_a_value_template():
+def test_escaped_braces_do_not_act_as_a_value_template_in_attr():
     class TestAsset(Asset):
         foo = '{{bar}}'
 
